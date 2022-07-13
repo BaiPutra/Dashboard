@@ -1,14 +1,13 @@
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+// import { sentenceCase } from 'change-case';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+// import { Link as RouterLink } from 'react-router-dom';
 // material
 import {
   Card,
   Table,
   Stack,
-  Button,
-  Checkbox,
   TableRow,
   TableBody,
   TableCell,
@@ -19,13 +18,13 @@ import {
 } from '@mui/material';
 // components
 import Page from '../components/Page';
-import Label from '../components/Label';
+// import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
-import Iconify from '../components/Iconify';
+// import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashboard/user';
 // mock
-import USERLIST from '../_mock/user';
+// import USERLIST from '../_mock/user';
 
 // ----------------------------------------------------------------------
 
@@ -34,8 +33,8 @@ const TABLE_HEAD = [
   { id: 'merchant', label: 'Merchant', alignRight: false },
   { id: 'peruntukan', label: 'Peruntukan', alignRight: false },
   { id: 'entryTicket', label: 'Entry Ticket', alignRight: false },
-  { id: 'updateTicket', label: 'Update Ticket', alignRight: false },
-  { id: 'pemasang', label: 'Pemasang', alignRight: false },
+  // { id: 'updateTicket', label: 'Update Ticket', alignRight: false },
+  // { id: 'pemasang', label: 'Pemasang', alignRight: false },
   { id: '' },
 ];
 
@@ -71,6 +70,11 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function User() {
+  const [users, setUsers] = useState([]);
+  const [keyword, setKeyword] = useState('');
+  const [query, setQuery] = useState('');
+  const [limit, setLimit] = useState(10);
+
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -83,6 +87,25 @@ export default function User() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  useEffect(() => {
+    getUsers();
+  });
+
+  const getUsers = async () => {
+    const response = await axios.get(`http://localhost:5000/users?search_query=${keyword}&page=${page}&limit=${limit}`);
+    setUsers(response.data.result);
+    // setPage(response.data.page);
+    // setPages(response.data.totalPage);
+    // setRowsPerPage(response.data.totalRows);
+  };
+  // console.log(users.length);
+
+  // const searchData = (e) => {
+  //   e.preventDefault();
+  //   setPage(0);
+  //   setKeyword(query);
+  // };
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -91,7 +114,7 @@ export default function User() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = users.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -126,9 +149,9 @@ export default function User() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(users, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
 
@@ -154,56 +177,39 @@ export default function User() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={users.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const isItemSelected = selected.indexOf(name) !== -1;
+                  {users.map((user) => (
+                    <TableRow
+                      hover
+                      key={user.id}
+                      // tabIndex={-1}
+                      // role="checkbox"
+                      // selected={isItemSelected}
+                      // aria-checked={isItemSelected}
+                    >
+                      {/* <TableCell padding="checkbox"></TableCell> */}
+                      <TableCell align="left">
+                        <Typography variant="subtitle2" noWrap>
+                          {user.id}
+                        </Typography>
+                      </TableCell>
 
-                    return (
-                      <TableRow
-                        hover
-                        key={id}
-                        tabIndex={-1}
-                        role="checkbox"
-                        selected={isItemSelected}
-                        aria-checked={isItemSelected}
-                      >
-                        <TableCell padding="checkbox">
-                          {/* <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, name)} /> */}
-                        </TableCell>
-                        {/* <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell> */}
-                        <TableCell align="left">
-                          <Typography variant="subtitle2" noWrap>
-                            {name}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="left">{company}</TableCell>
-                        <TableCell align="left">{role}</TableCell>
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-                        <TableCell align="left">
-                          <Label variant="ghost" color={(status === 'banned' && 'error') || 'success'}>
-                            {sentenceCase(status)}
-                          </Label>
-                        </TableCell>
+                      <TableCell align="left">{user.name}</TableCell>
 
-                        <TableCell align="right">
-                          <UserMoreMenu />
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                      <TableCell align="left">{user.email}</TableCell>
+
+                      <TableCell align="left">{user.gender}</TableCell>
+
+                      <TableCell align="right">
+                        <UserMoreMenu />
+                      </TableCell>
+                    </TableRow>
+                  ))}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
@@ -227,7 +233,7 @@ export default function User() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={users.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
