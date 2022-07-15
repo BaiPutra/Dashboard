@@ -29,10 +29,10 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashbo
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'ticketid', label: 'TicketID', alignRight: false },
-  { id: 'merchant', label: 'Merchant', alignRight: false },
-  { id: 'peruntukan', label: 'Peruntukan', alignRight: false },
-  { id: 'entryTicket', label: 'Entry Ticket', alignRight: false },
+  { id: 'ticketid', label: 'ID', alignRight: false },
+  { id: 'merchant', label: 'Name', alignRight: false },
+  { id: 'peruntukan', label: 'Email', alignRight: false },
+  { id: 'entryTicket', label: 'Gender', alignRight: false },
   // { id: 'updateTicket', label: 'Update Ticket', alignRight: false },
   // { id: 'pemasang', label: 'Pemasang', alignRight: false },
   { id: '' },
@@ -71,9 +71,9 @@ function applySortFilter(array, comparator, query) {
 
 export default function User() {
   const [users, setUsers] = useState([]);
-  const [keyword, setKeyword] = useState('');
-  const [query, setQuery] = useState('');
-  const [limit, setLimit] = useState(10);
+  // const [keyword, setKeyword] = useState('');
+  // const [query, setQuery] = useState('');
+  // const [limit, setLimit] = useState(10);
 
   const [page, setPage] = useState(0);
 
@@ -83,8 +83,10 @@ export default function User() {
 
   const [orderBy, setOrderBy] = useState('name');
 
+  // same as keyword !
   const [filterName, setFilterName] = useState('');
 
+  // same as rowsPerPage !
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
@@ -92,7 +94,7 @@ export default function User() {
   });
 
   const getUsers = async () => {
-    const response = await axios.get(`http://localhost:5000/users?search_query=${keyword}&page=${page}&limit=${limit}`);
+    const response = await axios.get(`http://localhost:5000/users?search_query=${filterName}&page=${page}&limit=${rowsPerPage}`);
     setUsers(response.data.result);
     // setPage(response.data.page);
     // setPages(response.data.totalPage);
@@ -140,8 +142,8 @@ export default function User() {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+  const handleChangeRowsPerPage = (data) => {
+    setRowsPerPage(parseInt(data.target.value, 10));
     setPage(0);
   };
 
