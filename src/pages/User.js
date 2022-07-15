@@ -2,7 +2,6 @@ import { filter } from 'lodash';
 // import { sentenceCase } from 'change-case';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-// import { Link as RouterLink } from 'react-router-dom';
 // material
 import {
   Card,
@@ -18,27 +17,19 @@ import {
 } from '@mui/material';
 // components
 import Page from '../components/Page';
-// import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
-// import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashboard/user';
 // mock
 // import USERLIST from '../_mock/user';
-
-// ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'ticketid', label: 'ID', alignRight: false },
   { id: 'merchant', label: 'Name', alignRight: false },
   { id: 'peruntukan', label: 'Email', alignRight: false },
   { id: 'entryTicket', label: 'Gender', alignRight: false },
-  // { id: 'updateTicket', label: 'Update Ticket', alignRight: false },
-  // { id: 'pemasang', label: 'Pemasang', alignRight: false },
-  { id: '' },
+  { id: 'tanggal', label: 'Tanggal', alignRight: false },
 ];
-
-// ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -74,6 +65,8 @@ export default function User() {
   // const [keyword, setKeyword] = useState('');
   // const [query, setQuery] = useState('');
   // const [limit, setLimit] = useState(10);
+  // const [pages, setPages] = useState(0);
+  // const [rows, setRows] = useState(0);
 
   const [page, setPage] = useState(0);
 
@@ -87,7 +80,7 @@ export default function User() {
   const [filterName, setFilterName] = useState('');
 
   // same as rowsPerPage !
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     getUsers();
@@ -98,15 +91,8 @@ export default function User() {
     setUsers(response.data.result);
     // setPage(response.data.page);
     // setPages(response.data.totalPage);
-    // setRowsPerPage(response.data.totalRows);
+    // setRows(response.data.totalRows);
   };
-  // console.log(users.length);
-
-  // const searchData = (e) => {
-  //   e.preventDefault();
-  //   setPage(0);
-  //   setKeyword(query);
-  // };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -164,9 +150,6 @@ export default function User() {
           <Typography variant="h4" gutterBottom>
             Tiket EDC
           </Typography>
-          {/* <Button variant="contained" component={RouterLink} to="#" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
-          </Button> */}
         </Stack>
 
         <Card>
@@ -187,16 +170,11 @@ export default function User() {
                 <TableBody>
                   {users.map((user) => (
                     <TableRow
-                      hover
+                      // hover
                       key={user.id}
-                      // tabIndex={-1}
-                      // role="checkbox"
-                      // selected={isItemSelected}
-                      // aria-checked={isItemSelected}
                     >
-                      {/* <TableCell padding="checkbox"></TableCell> */}
                       <TableCell align="left">
-                        <Typography variant="subtitle2" noWrap>
+                        <Typography variant="h5" noWrap>
                           {user.id}
                         </Typography>
                       </TableCell>
@@ -207,9 +185,7 @@ export default function User() {
 
                       <TableCell align="left">{user.gender}</TableCell>
 
-                      <TableCell align="right">
-                        <UserMoreMenu />
-                      </TableCell>
+                      <TableCell align="left">{user.createdAt}</TableCell>
                     </TableRow>
                   ))}
                   {emptyRows > 0 && (
@@ -233,7 +209,7 @@ export default function User() {
           </Scrollbar>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[10, 20, 30]}
             component="div"
             count={users.length}
             rowsPerPage={rowsPerPage}
