@@ -32,7 +32,7 @@ export default function AppConversionRates({ title, subheader, chartData, ...oth
       },
     },
     plotOptions: {
-      bar: { horizontal: true, barHeight: '28%', borderRadius: 2 },
+      bar: { horizontal: true, barHeight: '35%', borderRadius: 2 },
     },
     xaxis: {
       categories: chartLabels,
@@ -44,7 +44,7 @@ export default function AppConversionRates({ title, subheader, chartData, ...oth
       <CardHeader title={title} subheader={subheader} />
 
       <Box sx={{ mx: 3 }} dir="ltr">
-        <ReactApexChart type="bar" series={[{ data: chartSeries }]} options={chartOptions} height={364} />
+        <ReactApexChart type="bar" series={[{ data: chartSeries }]} options={chartOptions} height={400} />
       </Box>
     </Card>
   );

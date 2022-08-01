@@ -17,7 +17,7 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
   width: theme.spacing(8),
   height: theme.spacing(8),
   justifyContent: 'center',
-  marginBottom: theme.spacing(3),
+  marginBottom: theme.spacing(1),
 }));
 
 // ----------------------------------------------------------------------
@@ -26,15 +26,16 @@ AppWidgetSummary.propTypes = {
   color: PropTypes.string,
   icon: PropTypes.string,
   title: PropTypes.string.isRequired,
-  total: PropTypes.number.isRequired,
+  total: PropTypes.number,
+  percent: PropTypes.string,
   sx: PropTypes.object,
 };
 
-export default function AppWidgetSummary({ title, total, icon, color = 'primary', sx, ...other }) {
+export default function AppWidgetSummary({ title, total, icon, color = 'primary', percent, sx, ...other }) {
   return (
     <Card
       sx={{
-        py: 5,
+        py: 4,
         boxShadow: 0,
         textAlign: 'center',
         color: (theme) => theme.palette[color].darker,
@@ -53,14 +54,15 @@ export default function AppWidgetSummary({ title, total, icon, color = 'primary'
             )} 100%)`,
         }}
       >
-        <Iconify icon={icon} width={24} height={24} />
+        <Iconify icon={icon} width={28} height={28} />
       </IconWrapperStyle>
-
-      <Typography variant="h3">{fShortenNumber(total)}</Typography>
-
-      <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
+      
+      <Typography variant="subtitle2" sx={{ opacity: 0.7 }}>
         {title}
       </Typography>
+
+      <Typography variant="h3">{total} {percent}</Typography>
+
     </Card>
   );
 }

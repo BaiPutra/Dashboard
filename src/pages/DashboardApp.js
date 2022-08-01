@@ -1,7 +1,12 @@
+import React, { useEffect, useState } from 'react';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography } from '@mui/material';
+import { Grid, Container, Typography, Card, Box } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import { clsx } from 'clsx';
+// data
+import TiketDataService from '../helper/services';
 // components
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
@@ -18,113 +23,262 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
-// ----------------------------------------------------------------------
+const columns = [
+  { field: 'id', headerName: 'Kantor Cabang', width: 210 },
+  { field: 'total', headerName: 'Tiket Selesai', type: 'number', width: 130 },
+  { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', width: 130 },
+  { field: 'targetOut', headerName: 'Keluar Target', type: 'number', width: 130 },
+  {
+    field: 'rateTarget',
+    headerName: 'Persentase',
+    type: 'number',
+    width: 130,
+    // valueGetter: (params) => `${params.row.rateTarget} %`,
+    cellClassName: (params) => {
+      if (params.value == null) {
+        return '';
+      }
+
+      return clsx('super-app', {
+        negative: params.value < 80,
+        positive: params.value > 80,
+      });
+    },
+  },
+];
 
 export default function DashboardApp() {
   const theme = useTheme();
+  const [tiketSelesai, setTiketSelesai] = useState([]);
+  const [listTanggal, setListTanggal] = useState([]);
+  const [listMinggu, setListMinggu] = useState([]);
+  const [listKanca, setListKanca] = useState([]);
+  const [jenisTiket, setJenisTiket] = useState([]);
+  const [bagian, setBagian] = useState([]);
+  useEffect(() => {
+    closedTicketLastWeek();
+    perTanggal();
+    perMinggu();
+    performaKanca();
+    perJenisMasalah();
+    perBagian();
+  }, []);
+  const closedTicketLastWeek = () => {
+    TiketDataService.closedTicketLastWeek()
+      .then((response) => {
+        setTiketSelesai(response.data);
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  const perTanggal = () => {
+    TiketDataService.perTanggal()
+      .then((response) => {
+        setListTanggal(response.data);
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  const perMinggu = () => {
+    TiketDataService.perMinggu()
+      .then((response) => {
+        setListMinggu(response.data);
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  const performaKanca = () => {
+    TiketDataService.performaKanca()
+      .then((response) => {
+        setListKanca(response.data);
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  const perJenisMasalah = () => {
+    TiketDataService.perJenisMasalah()
+      .then((response) => {
+        setJenisTiket(response.data);
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  const perBagian = () => {
+    TiketDataService.perBagian()
+      .then((response) => {
+        setBagian(response.data);
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const tanggal = listTanggal.map(({ tanggal }) => tanggal);
+  // console.log(tanggal);
+  const tiketClose = listTanggal.map(({ tiketClose }) => tiketClose);
+  // console.log(tiketClose);
+  const targetIn = listTanggal.map(({ targetIn }) => targetIn);
+  const targetOut = listTanggal.map(({ targetOut }) => targetOut);
+
+  const minggu = listMinggu.map(({ sampai }) => sampai);
+  const atm = listMinggu.map(({ atm }) => atm);
+  const crm = listMinggu.map(({ crm }) => crm);
+  const edc = listMinggu.map(({ edc }) => edc);
+
+  console.log(listKanca);
 
   return (
     <Page title="Dashboard">
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome back
+          Selamat Datang!
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} />
+          <Grid item xs={6} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Tiket Selesai"
+              total={tiketSelesai.tiket_selesai}
+              icon={'ant-design:file-done-outlined'}
+            />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="New Users" total={1352831} color="info" icon={'ant-design:apple-filled'} />
+          <Grid item xs={6} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Sesuai Target"
+              total={tiketSelesai.targetIn}
+              color="success"
+              icon={'icon-park-solid:doc-success'}
+            />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Item Orders" total={1723315} color="warning" icon={'ant-design:windows-filled'} />
+          <Grid item xs={6} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Keluar Target"
+              total={tiketSelesai.targetOut}
+              color="error"
+              icon={'icon-park-solid:file-failed'}
+            />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
+          <Grid item xs={6} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Rate Target"
+              total={tiketSelesai.rate_target}
+              percent="%"
+              color="secondary"
+              icon={'iconoir:percentage-round'}
+            />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
-              title="Website Visits"
-              subheader="(+43%) than last year"
-              chartLabels={[
-                '01/01/2022',
-                '02/01/2022',
-                '03/01/2022',
-                '04/01/2022',
-                '05/01/2022',
-                '06/01/2022',
-                '07/01/2022',
-                '08/01/2022',
-                '09/01/2022',
-                '10/01/2022',
-                '11/01/2022',
-              ]}
+              title="Current Closed Ticket"
+              subheader="Departement ITE"
+              chartLabels={minggu}
               chartData={[
                 {
-                  name: 'Team A',
-                  type: 'column',
-                  fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
-                },
-                {
-                  name: 'Team B',
+                  name: 'EDC',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  data: edc,
                 },
                 {
-                  name: 'Team C',
+                  name: 'ATM',
                   type: 'line',
                   fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  data: atm,
+                },
+                {
+                  name: 'CRM',
+                  type: 'column',
+                  fill: 'solid',
+                  data: crm,
                 },
               ]}
             />
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={4}>
+            <AppConversionRates
+              title="Performa Kantor Cabang"
+              subheader="Implementor"
+              chartData={listKanca.map((item) => {
+                const newItem = { label: item.id, value: item.total };
+                return newItem;
+              })}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={8}>
+            <Card>
+              <Box
+                sx={{
+                  height: 470,
+                  padding: 1,
+                  '& .super-app-theme--cell': {
+                    backgroundColor: 'rgba(224, 183, 60, 0.55)',
+                    color: '#1a3e72',
+                    fontWeight: '600',
+                  },
+                  '& .super-app.negative': {
+                    backgroundColor: '#d47483' ,
+                    color: '#1a3e72',
+                    fontWeight: '600',
+                  },
+                  '& .super-app.positive': {
+                    backgroundColor: 'rgba(157, 255, 118, 0.49)',
+                    color: '#1a3e72',
+                    fontWeight: '600',
+                  },
+                }}
+              >
+                <DataGrid
+                  rows={listKanca}
+                  columns={columns}
+                  pageSize={6}
+                  rowsPerPageOptions={[6]}
+                  // sx={{
+                  //   boxShadow: 2,
+                  //   border: 2,
+                  //   borderColor: 'primary.light',
+                  //   '& .MuiDataGrid-cell:hover': {
+                  //     color: 'primary.main',
+                  //   },
+                  // }}
+                />
+              </Box>
+            </Card>
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
               title="Current Visits"
-              chartData={[
-                { label: 'America', value: 1000 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
-              ]}
-              chartColors={[
-                theme.palette.primary.main,
-                theme.palette.chart.blue[0],
-                theme.palette.chart.violet[0],
-                theme.palette.chart.yellow[0],
-              ]}
+              chartData={bagian.map((item) => {
+                const newItem = { label: item.bagian, value: item.tiket_close };
+                return newItem;
+              })}
+              // chartColors={[
+              //   theme.palette.primary.main,
+              //   theme.palette.chart.blue[0],
+              //   theme.palette.chart.violet[0],
+              //   theme.palette.chart.yellow[0],
+              // ]}
             />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
-            <AppConversionRates
-              title="Conversion Rates"
-              subheader="(+43%) than last year"
-              chartData={[
-                { label: 'Italy', value: 400 },
-                { label: 'Japan', value: 430 },
-                { label: 'China', value: 448 },
-                { label: 'Canada', value: 470 },
-                { label: 'France', value: 540 },
-                { label: 'Germany', value: 580 },
-                { label: 'South Korea', value: 690 },
-                { label: 'Netherlands', value: 1100 },
-                { label: 'United States', value: 1200 },
-                { label: 'United Kingdom', value: 1380 },
-              ]}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
+          {/* <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
               title="Current Subject"
               chartLabels={['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math']}
@@ -135,9 +289,9 @@ export default function DashboardApp() {
               ]}
               chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate
               title="News Update"
               list={[...Array(5)].map((_, index) => ({
@@ -148,9 +302,9 @@ export default function DashboardApp() {
                 postedAt: faker.date.recent(),
               }))}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={4}>
+          {/* <Grid item xs={12} md={6} lg={4}>
             <AppOrderTimeline
               title="Order Timeline"
               list={[...Array(5)].map((_, index) => ({
@@ -194,9 +348,9 @@ export default function DashboardApp() {
                 },
               ]}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppTasks
               title="Tasks"
               list={[
@@ -207,7 +361,7 @@ export default function DashboardApp() {
                 { id: '5', label: 'Sprint Showcase' },
               ]}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </Page>
