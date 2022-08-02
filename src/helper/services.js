@@ -40,6 +40,10 @@ const findByPemasang = (pemasang) => {
   return http.get(`/tiket/performaPemasang?pemasang=${pemasang}`);
 };
 
+const jenisTiket = () => {
+  return http.get('/tiket/jenisTiket')
+}
+
 const TiketDataService = {
   getAll,
   closedTicketLastWeek,
@@ -51,6 +55,7 @@ const TiketDataService = {
   perMinggu,
   performaKanca,
   perBagian,
+  jenisTiket,
 };
 
 export default TiketDataService;

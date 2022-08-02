@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography, Card, Box } from '@mui/material';
@@ -12,9 +11,6 @@ import Page from '../components/Page';
 import Iconify from '../components/Iconify';
 // sections
 import {
-  AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
   AppCurrentVisits,
   AppWebsiteVisits,
   AppTrafficBySite,
@@ -24,16 +20,17 @@ import {
 } from '../sections/@dashboard/app';
 
 const columns = [
-  { field: 'id', headerName: 'Kantor Cabang', width: 210 },
-  { field: 'total', headerName: 'Tiket Selesai', type: 'number', width: 130 },
-  { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', width: 130 },
-  { field: 'targetOut', headerName: 'Keluar Target', type: 'number', width: 130 },
+  { field: 'id', headerName: 'Kantor Cabang', flex: 2 },
+  { field: 'total', headerName: 'Tiket Selesai', type: 'number', flex: 1, headerAlign: 'center', align: 'center' },
+  { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1 },
+  { field: 'targetOut', headerName: 'Keluar Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1 },
   {
     field: 'rateTarget',
     headerName: 'Persentase',
     type: 'number',
-    width: 130,
-    // valueGetter: (params) => `${params.row.rateTarget} %`,
+    headerAlign: 'center',
+    align: 'center',
+    flex: 1,
     cellClassName: (params) => {
       if (params.value == null) {
         return '';
@@ -53,14 +50,12 @@ export default function DashboardApp() {
   const [listTanggal, setListTanggal] = useState([]);
   const [listMinggu, setListMinggu] = useState([]);
   const [listKanca, setListKanca] = useState([]);
-  const [jenisTiket, setJenisTiket] = useState([]);
   const [bagian, setBagian] = useState([]);
   useEffect(() => {
     closedTicketLastWeek();
     perTanggal();
     perMinggu();
     performaKanca();
-    perJenisMasalah();
     perBagian();
   }, []);
   const closedTicketLastWeek = () => {
@@ -97,16 +92,6 @@ export default function DashboardApp() {
     TiketDataService.performaKanca()
       .then((response) => {
         setListKanca(response.data);
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-  const perJenisMasalah = () => {
-    TiketDataService.perJenisMasalah()
-      .then((response) => {
-        setJenisTiket(response.data);
         console.log(response.data);
       })
       .catch((e) => {
@@ -196,14 +181,14 @@ export default function DashboardApp() {
                 },
                 {
                   name: 'ATM',
-                  type: 'line',
-                  fill: 'solid',
+                  type: 'area',
+                  fill: 'gradient',
                   data: atm,
                 },
                 {
                   name: 'CRM',
-                  type: 'column',
-                  fill: 'solid',
+                  type: 'area',
+                  fill: 'gradient',
                   data: crm,
                 },
               ]}

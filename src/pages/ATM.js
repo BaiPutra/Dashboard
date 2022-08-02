@@ -1,31 +1,51 @@
 import React, { useEffect, useState } from 'react';
 // @mui
-import { Grid, Container, Typography, Card, Box, Button, Modal } from '@mui/material';
+import { Grid, Container, Typography, Card, Box, Button, Modal, Stack } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { clsx } from 'clsx';
 // data
+import { CSVLink, CSVDownload } from "react-csv";
 import TiketDataService from '../helper/services';
 // components
 import Page from '../components/Page';
 // sections
-import { AppWidgetSummary } from '../sections/@dashboard/app';
+import { AppWidgetSummary, Statistics, TableCard } from '../sections/@dashboard/app';
 
 const columns = [
-  { field: 'id', headerName: 'Tanggal', width: 240 },
-  { field: 'tiketClose', headerName: 'Tiket Selesai', type: 'number', width: 220 },
-  { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', width: 220 },
-  { field: 'targetOut', headerName: 'Keluar Target', type: 'number', width: 220 },
+  { field: 'id', headerName: 'No', flex: 0.4 },
+  { field: 'tanggal', headerName: 'Tanggal', flex: 1.5 },
+  { field: 'tiketClose', headerName: 'Tiket Selesai', type: 'number', headerAlign: 'center', align: 'center', flex: 1, color: '#1a3e72' },
   {
-    field: 'rateTarget',
-    headerName: 'Persentase',
-    type: 'number',
-    width: 220,
-    // valueGetter: (params) => `${params.row.rateTarget} %`,
+    field: 'targetIn', headerName: 'Sesuai Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1,
     cellClassName: (params) => {
       if (params.value == null) {
         return '';
       }
-
+      return clsx('super-app', {
+        in: params
+      })
+    }
+  },
+  {
+    field: 'targetOut', headerName: 'Keluar Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1,
+    cellClassName: (params) => {
+      if (params.value == null) {
+        return '';
+      }
+      return clsx('super-app', {
+        out: params
+      })
+    }
+  },
+  {
+    field: 'rateTarget',
+    headerName: 'Persentase (%)',
+    type: 'number',
+    headerAlign: 'center', align: 'center', flex: 1,
+    cellClassName: (params) => {
+      if (params.value == null) {
+        return '';
+      }
       return clsx('super-app', {
         negative: params.value < 80,
         positive: params.value > 80,
@@ -35,16 +55,15 @@ const columns = [
 ];
 
 const columns2 = [
-  { field: 'id', headerName: 'Jenis Masalah', width: 230 },
-  { field: 'tiketClose', headerName: 'Tiket Selesai', type: 'number', width: 110 },
-  { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', width: 110 },
-  { field: 'targetOut', headerName: 'Keluar Target', type: 'number', width: 110 },
+  { field: 'id', headerName: 'Jenis Masalah', width: 280 },
+  { field: 'tiketClose', headerName: 'Tiket Selesai', type: 'number', width: 110, align: 'center' },
+  { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', width: 110, align: 'center' },
+  { field: 'targetOut', headerName: 'Keluar Target', type: 'number', width: 110, align: 'center' },
   {
     field: 'rateTarget',
     headerName: 'Persentase',
     type: 'number',
-    width: 100,
-    // valueGetter: (params) => `${params.row.rateTarget} %`,
+    width: 100, align: 'center',
     cellClassName: (params) => {
       if (params.value == null) {
         return '';
@@ -59,7 +78,7 @@ const columns2 = [
 ];
 
 const columns3 = [
-  { field: 'id', headerName: 'Kantor Cabang', width: 230 },
+  { field: 'id', headerName: 'Kantor Cabang', width: 280 },
   { field: 'total', headerName: 'Tiket Selesai', type: 'number', width: 110 },
   { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', width: 110 },
   { field: 'targetOut', headerName: 'Keluar Target', type: 'number', width: 110 },
@@ -99,10 +118,8 @@ const style = {
 export default function ATM() {
   const [tiketSelesai, setTiketSelesai] = useState([]);
   const [listTanggal, setListTanggal] = useState([]);
-  const [listMinggu, setListMinggu] = useState([]);
   const [listKanca, setListKanca] = useState([]);
   const [jenisTiket, setJenisTiket] = useState([]);
-  const [bagian, setBagian] = useState([]);
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -110,10 +127,8 @@ export default function ATM() {
   useEffect(() => {
     closedTicketLastWeek();
     perTanggal();
-    perMinggu();
     performaKanca();
     perJenisMasalah();
-    perBagian();
   }, []);
   const closedTicketLastWeek = () => {
     TiketDataService.closedTicketLastWeek()
@@ -129,16 +144,6 @@ export default function ATM() {
     TiketDataService.perTanggal()
       .then((response) => {
         setListTanggal(response.data);
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-  const perMinggu = () => {
-    TiketDataService.perMinggu()
-      .then((response) => {
-        setListMinggu(response.data);
         console.log(response.data);
       })
       .catch((e) => {
@@ -164,24 +169,7 @@ export default function ATM() {
       .catch((e) => {
         console.log(e);
       });
-  };
-  const perBagian = () => {
-    TiketDataService.perBagian()
-      .then((response) => {
-        setBagian(response.data);
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const minggu = listMinggu.map(({ sampai }) => sampai);
-  const atm = listMinggu.map(({ atm }) => atm);
-  const crm = listMinggu.map(({ crm }) => crm);
-  const edc = listMinggu.map(({ edc }) => edc);
-
-  console.log(listKanca);
+  }
 
   return (
     <Page title="ATM">
@@ -241,9 +229,17 @@ export default function ATM() {
 
           <Grid item xs={12} md={6} lg={12}>
             <Card>
+              <Stack direction="row" justifyContent='space-between'>
+                <Typography variant="h6" sx={{ pl: 3, pt: 3, pb: 1 }}>
+                  Ticket Handle Last Week
+                </Typography>
+                <Box sx={{ pr: 5, pt: 3, pb: 1 }}>
+                  <CSVLink data={jenisTiket} filename={"file.csv"}>Download CSV</CSVLink>
+                </Box>
+              </Stack>
               <Box
                 sx={{
-                  height: 340,
+                  height: 330,
                   padding: 1,
                   '& .super-app-theme--cell': {
                     backgroundColor: 'rgba(224, 183, 60, 0.55)',
@@ -257,9 +253,19 @@ export default function ATM() {
                   },
                   '& .super-app.positive': {
                     backgroundColor: 'rgba(157, 255, 118, 0.49)',
-                    color: '#1a3e72',
+                    // color: '#1a3e72',
                     fontWeight: '600',
                   },
+                  '& .super-app.in': {
+                    // backgroundColor: 'rgba(157, 255, 118, 0.49)',
+                    color: '#2e7d32',
+                    fontWeight: '800',
+                  },
+                  '& .super-app.out': {
+                    // backgroundColor: 'rgba(157, 255, 118, 0.49)',
+                    color: '#d32f2f',
+                    fontWeight: '800',
+                  }
                 }}
               >
                 <DataGrid rows={listTanggal} columns={columns} pageSize={6} rowsPerPageOptions={[6]} />
@@ -321,6 +327,14 @@ export default function ATM() {
                 <DataGrid rows={listKanca} columns={columns3} pageSize={6} rowsPerPageOptions={[6]} />
               </Box>
             </Card>
+          </Grid>
+
+          <Grid item xs={12} md={8}>
+            <Statistics />
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <TableCard />
           </Grid>
         </Grid>
       </Container>
