@@ -4,7 +4,7 @@ import { Grid, Container, Typography, Card, Box, Button, Modal, Stack } from '@m
 import { DataGrid } from '@mui/x-data-grid';
 import { clsx } from 'clsx';
 // data
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink, CSVDownload } from 'react-csv';
 import TiketDataService from '../helper/services';
 // components
 import Page from '../components/Page';
@@ -14,34 +14,54 @@ import { AppWidgetSummary, Statistics, TableCard } from '../sections/@dashboard/
 const columns = [
   { field: 'id', headerName: 'No', flex: 0.4 },
   { field: 'tanggal', headerName: 'Tanggal', flex: 1.5 },
-  { field: 'tiketClose', headerName: 'Tiket Selesai', type: 'number', headerAlign: 'center', align: 'center', flex: 1, color: '#1a3e72' },
   {
-    field: 'targetIn', headerName: 'Sesuai Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1,
-    cellClassName: (params) => {
-      if (params.value == null) {
-        return '';
-      }
-      return clsx('super-app', {
-        in: params
-      })
-    }
+    field: 'tiketClose',
+    headerName: 'Tiket Selesai',
+    type: 'number',
+    headerAlign: 'center',
+    align: 'center',
+    flex: 1,
+    color: '#1a3e72',
   },
   {
-    field: 'targetOut', headerName: 'Keluar Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1,
+    field: 'targetIn',
+    headerName: 'Sesuai Target',
+    type: 'number',
+    headerAlign: 'center',
+    align: 'center',
+    flex: 1,
     cellClassName: (params) => {
       if (params.value == null) {
         return '';
       }
       return clsx('super-app', {
-        out: params
-      })
-    }
+        in: params,
+      });
+    },
+  },
+  {
+    field: 'targetOut',
+    headerName: 'Keluar Target',
+    type: 'number',
+    headerAlign: 'center',
+    align: 'center',
+    flex: 1,
+    cellClassName: (params) => {
+      if (params.value == null) {
+        return '';
+      }
+      return clsx('super-app', {
+        out: params,
+      });
+    },
   },
   {
     field: 'rateTarget',
     headerName: 'Persentase (%)',
     type: 'number',
-    headerAlign: 'center', align: 'center', flex: 1,
+    headerAlign: 'center',
+    align: 'center',
+    flex: 1,
     cellClassName: (params) => {
       if (params.value == null) {
         return '';
@@ -63,7 +83,8 @@ const columns2 = [
     field: 'rateTarget',
     headerName: 'Persentase',
     type: 'number',
-    width: 100, align: 'center',
+    width: 100,
+    align: 'center',
     cellClassName: (params) => {
       if (params.value == null) {
         return '';
@@ -101,14 +122,23 @@ const columns3 = [
   },
 ];
 
+const columns4 = [
+  { field: 'id', headerName: '#', flex: 0.5 },
+  { field: 'tid', headerName: 'TID', flex: 0.5 },
+  { field: 'lokasi', headerName: 'Lokasi', flex: 1 },
+  { field: 'kanca', headerName: 'Kantor Cabang', flex: 1 },
+  { field: 'entryTiket', headerName: 'Tiket Masuk', flex: 1 },
+  { field: 'updateTiket', headerName: 'Tiket Selesai', flex: 1 },
+];
+
 const style = {
-  height: 480,
+  height: 530,
   padding: 1,
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 760,
+  width: '70%',
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -116,6 +146,7 @@ const style = {
 };
 
 export default function ATM() {
+  const [tiket, setTiket] = useState([]);
   const [tiketSelesai, setTiketSelesai] = useState([]);
   const [listTanggal, setListTanggal] = useState([]);
   const [listKanca, setListKanca] = useState([]);
@@ -124,17 +155,30 @@ export default function ATM() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   useEffect(() => {
+    getAll();
     closedTicketLastWeek();
     perTanggal();
     performaKanca();
     perJenisMasalah();
   }, []);
+
+  const getAll = () => {
+    TiketDataService.getAll()
+      .then((response) => {
+        setTiket(response.data);
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
   const closedTicketLastWeek = () => {
     TiketDataService.closedTicketLastWeek()
       .then((response) => {
         setTiketSelesai(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -144,7 +188,7 @@ export default function ATM() {
     TiketDataService.perTanggal()
       .then((response) => {
         setListTanggal(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -154,7 +198,7 @@ export default function ATM() {
     TiketDataService.performaKanca()
       .then((response) => {
         setListKanca(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -164,12 +208,21 @@ export default function ATM() {
     TiketDataService.perJenisMasalah()
       .then((response) => {
         setJenisTiket(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
       });
-  }
+  };
+
+  const targetIn = tiket.filter((tiket) => tiket.targetIn === 1);
+  console.log(targetIn);
+
+  const targetOut = tiket.filter((tiket) => tiket.targetIn === 0);
+  console.log(targetOut);
+
+  const rate = (targetIn.length / tiket.length) * 100;
+  console.log(rate);
 
   return (
     <Page title="ATM">
@@ -183,7 +236,7 @@ export default function ATM() {
             <AppWidgetSummary
               title="Tiket Selesai"
               onClick={handleOpen}
-              total={tiketSelesai.tiket_selesai}
+              total={tiket.length}
               icon={'ant-design:file-done-outlined'}
             />
             <Modal
@@ -193,7 +246,14 @@ export default function ATM() {
               aria-describedby="modal-modal-description"
             >
               <Box sx={style}>
-                <DataGrid rows={jenisTiket} columns={columns2} pageSize={6} rowsPerPageOptions={[6]} />
+                <Box sx={{ pb: 3 }}>
+                  <CSVLink data={tiket} filename={'file.csv'}>
+                    Download CSV
+                  </CSVLink>
+                </Box>
+                <Box sx={{ pb: 5, height: '100%', width: '100%' }}>
+                  <DataGrid rows={tiket} columns={columns4} />
+                </Box>
               </Box>
             </Modal>
             {/* <Button onClick={handleOpen}>Details</Button> */}
@@ -229,12 +289,14 @@ export default function ATM() {
 
           <Grid item xs={12} md={6} lg={12}>
             <Card>
-              <Stack direction="row" justifyContent='space-between'>
+              <Stack direction="row" justifyContent="space-between">
                 <Typography variant="h6" sx={{ pl: 3, pt: 3, pb: 1 }}>
                   Ticket Handle Last Week
                 </Typography>
                 <Box sx={{ pr: 5, pt: 3, pb: 1 }}>
-                  <CSVLink data={jenisTiket} filename={"file.csv"}>Download CSV</CSVLink>
+                  <CSVLink data={jenisTiket} filename={'file.csv'}>
+                    Download CSV
+                  </CSVLink>
                 </Box>
               </Stack>
               <Box
@@ -265,7 +327,7 @@ export default function ATM() {
                     // backgroundColor: 'rgba(157, 255, 118, 0.49)',
                     color: '#d32f2f',
                     fontWeight: '800',
-                  }
+                  },
                 }}
               >
                 <DataGrid rows={listTanggal} columns={columns} pageSize={6} rowsPerPageOptions={[6]} />
