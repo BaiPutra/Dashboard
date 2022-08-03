@@ -17,13 +17,13 @@ const navConfig = [
     icon: getIcon('eva:people-fill'),
   },
   {
-    title: 'product',
-    path: '/dashboard/products',
+    title: 'CRM',
+    path: '/dashboard/crm',
     icon: getIcon('eva:shopping-bag-fill'),
   },
   {
-    title: 'blog',
-    path: '/dashboard/blog',
+    title: 'EDC',
+    path: '/dashboard/edc',
     icon: getIcon('eva:file-text-fill'),
   },
   {

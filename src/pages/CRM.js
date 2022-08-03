@@ -122,7 +122,7 @@ const columns3 = [
   },
 ];
 
-export default function ATM() {
+export default function CRM() {
   const [tiket, setTiket] = useState([]);
   const [listTanggal, setListTanggal] = useState([]);
   const [listKanca, setListKanca] = useState([]);
@@ -186,10 +186,10 @@ export default function ATM() {
   console.log(rate);
 
   return (
-    <Page title="ATM">
+    <Page title="CRM">
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          ATM Section
+          CRM Section
         </Typography>
 
         <Grid container spacing={3}>

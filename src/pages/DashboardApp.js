@@ -17,6 +17,7 @@ import {
   AppWidgetSummary,
   AppCurrentSubject,
   AppConversionRates,
+  Percentage,
 } from '../sections/@dashboard/app';
 
 const columns = [
@@ -131,7 +132,7 @@ export default function DashboardApp() {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={6} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={4}>
             <AppWidgetSummary
               title="Tiket Selesai"
               total={tiketSelesai.tiket_selesai}
@@ -139,7 +140,7 @@ export default function DashboardApp() {
             />
           </Grid>
 
-          <Grid item xs={6} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={4}>
             <AppWidgetSummary
               title="Sesuai Target"
               total={tiketSelesai.targetIn}
@@ -148,7 +149,7 @@ export default function DashboardApp() {
             />
           </Grid>
 
-          <Grid item xs={6} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={4 }>
             <AppWidgetSummary
               title="Keluar Target"
               total={tiketSelesai.targetOut}
@@ -157,7 +158,7 @@ export default function DashboardApp() {
             />
           </Grid>
 
-          <Grid item xs={6} sm={6} md={3}>
+          {/* <Grid item xs={6} sm={6} md={3}>
             <AppWidgetSummary
               title="Rate Target"
               total={tiketSelesai.rate_target}
@@ -165,6 +166,10 @@ export default function DashboardApp() {
               color="secondary"
               icon={'iconoir:percentage-round'}
             />
+          </Grid> */}
+
+          <Grid item xs={12} md={12}>
+            <Percentage/>
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
