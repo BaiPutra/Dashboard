@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import moment from 'moment-timezone';
 // @mui
-import { Grid, Container, Typography, Card, Box, Modal, Stack } from '@mui/material';
+import { Grid, Container, Typography, Card, Box, Modal, Stack, TextField, Button } from '@mui/material';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DataGrid } from '@mui/x-data-grid';
 import { clsx } from 'clsx';
 // data
@@ -185,6 +190,18 @@ export default function ATM() {
   const rate = (targetIn.length / tiket.length) * 100;
   console.log(rate);
 
+  const [value, setValue] = React.useState(new Date());
+
+  const [value1, setValue1] = React.useState(new Date());
+
+  const handleChange = (newValue) => {
+    setValue(newValue);
+  };
+
+  const handleChange1 = (newValue) => {
+    setValue1(newValue);
+  };
+
   return (
     <Page title="ATM">
       <Container maxWidth="xl">
@@ -193,6 +210,49 @@ export default function ATM() {
         </Typography>
 
         <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Grid item xs={6}>
+              <LocalizationProvider dateAdapter={AdapterDateFns} sx={{ pr: 1 }}>
+                <DesktopDatePicker
+                  label="Start Date"
+                  value={value}
+                  onChange={handleChange}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+              <LocalizationProvider dateAdapter={AdapterDateFns} sx={{ p: 1 }}>
+                <DesktopDatePicker
+                  label="End Date"
+                  value={value1}
+                  onChange={handleChange1}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+              <Grid item xs={6}>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    axios
+                      .get(
+                        `http://localhost:3000/api/tiket/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
+                          'YYYY-MM-DD'
+                        )}`
+                      )
+                      .then((response) => {
+                        setTiket(response.data);
+                        console.log(response.data);
+                      })
+                      .catch((e) => {
+                        console.log(e);
+                      });
+                  }}
+                >
+                  Submit
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+
           <Grid item xs={6} sm={6} md={3}>
             <AppWidgetSummary
               title="Tiket Selesai"
@@ -225,7 +285,7 @@ export default function ATM() {
           <Grid item xs={6} sm={6} md={3}>
             <AppWidgetSummary
               title="Rate Target"
-              total={rate}
+              total={rate.toFixed(2)}
               percent="%"
               color="secondary"
               icon={'iconoir:percentage-round'}

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography, Card, Box } from '@mui/material';
+import { Grid, Container, Typography, Card, Box, TextField } from '@mui/material';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DataGrid } from '@mui/x-data-grid';
 import { clsx } from 'clsx';
 // data
@@ -110,28 +113,57 @@ export default function DashboardApp() {
       });
   };
 
-  const tanggal = listTanggal.map(({ tanggal }) => tanggal);
-  // console.log(tanggal);
-  const tiketClose = listTanggal.map(({ tiketClose }) => tiketClose);
-  // console.log(tiketClose);
-  const targetIn = listTanggal.map(({ targetIn }) => targetIn);
-  const targetOut = listTanggal.map(({ targetOut }) => targetOut);
-
   const minggu = listMinggu.map(({ sampai }) => sampai);
   const atm = listMinggu.map(({ atm }) => atm);
   const crm = listMinggu.map(({ crm }) => crm);
   const edc = listMinggu.map(({ edc }) => edc);
 
-  console.log(listKanca);
+  const [value, setValue] = React.useState(new Date('2022-08-06T21:11:54'));
+
+  const [value1, setValue1] = React.useState(new Date('2022-08-06T21:11:54'));
+
+  const handleChange = (newValue) => {
+    setValue(newValue);
+    // console.log('haha', newValue);
+  };
+
+  const handleChange1 = (newValue) => {
+    setValue1(newValue);
+    // console.log('haha', newValue);
+  };
+
+  console.log(value);
 
   return (
     <Page title="Dashboard">
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          Selamat Datang!
+        <Typography variant="h4" sx={{ pb: 0.5 }}>
+          Dashboard Kinerja Departemen ITE 2022
         </Typography>
+        <Typography sx={{ mb: 4 }}>Tiket Departemen ITE (ATM, CRM, dan EDC)</Typography>
 
         <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <LocalizationProvider dateAdapter={AdapterDateFns} sx={{ pr:1 }}>
+              <DesktopDatePicker
+                label="Date desktop"
+                // inputFormat="YYYY-MM-DD"
+                value={value}
+                onChange={handleChange}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+            <LocalizationProvider dateAdapter={AdapterDateFns} sx={{ p:1 }}>
+              <DesktopDatePicker
+                label="Date desktop"
+                // inputFormat="YYYY-MM-DD"
+                value={value1}
+                onChange={handleChange1}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </Grid>
+
           <Grid item xs={6} sm={6} md={4}>
             <AppWidgetSummary
               title="Tiket Selesai"
@@ -149,7 +181,7 @@ export default function DashboardApp() {
             />
           </Grid>
 
-          <Grid item xs={6} sm={6} md={4 }>
+          <Grid item xs={6} sm={6} md={4}>
             <AppWidgetSummary
               title="Keluar Target"
               total={tiketSelesai.targetOut}
@@ -169,7 +201,7 @@ export default function DashboardApp() {
           </Grid> */}
 
           <Grid item xs={12} md={12}>
-            <Percentage/>
+            <Percentage />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
@@ -223,7 +255,7 @@ export default function DashboardApp() {
                     fontWeight: '600',
                   },
                   '& .super-app.negative': {
-                    backgroundColor: '#d47483' ,
+                    backgroundColor: '#d47483',
                     color: '#1a3e72',
                     fontWeight: '600',
                   },

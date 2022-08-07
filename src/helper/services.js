@@ -1,7 +1,8 @@
+import moment from 'moment-timezone';
 import http from './http-common';
 
 const getAll = () => {
-  return http.get('/tiket');
+  return http.get(`/tiket/${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}/${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}`);
 };
 
 const closedTicketLastWeek = () => {
