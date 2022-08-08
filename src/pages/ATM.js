@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import moment from 'moment-timezone';
+import axios from 'axios';
 // @mui
 import { Grid, Container, Typography, Card, Box, Modal, Stack, TextField, Button, Link } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
@@ -267,91 +267,92 @@ export default function ATM() {
         </Typography>
 
         <Grid container spacing={4}>
-          <Grid item xs={12} md={12}>
-            <Grid container spacing={4}>
-              <Grid item xs={3}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DesktopDatePicker
-                    label="Start Date"
-                    value={value}
-                    onChange={handleChange}
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </LocalizationProvider>
-              </Grid>
-              <Grid item xs={3}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DesktopDatePicker
-                    label="Start Date"
-                    value={value1}
-                    onChange={handleChange1}
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </LocalizationProvider>
-              </Grid>
-              <Grid item xs={3} justifyContent="center">
-                <Button
-                  variant="outlined"
-                  sx={{ height: '100%', minWidth:228, maxWidth:250 }}
-                  onClick={() => {
-                    axios
-                      .get(
-                        `http://localhost:3000/api/tiket/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
-                          'YYYY-MM-DD'
-                        )}`
-                      )
-                      .then((response) => {
-                        setTiket(response.data);
-                        console.log(response.data);
-                      })
-                      .catch((e) => {
-                        console.log(e);
-                      });
-                  }}
-                >
-                  Submit
-                </Button>
-              </Grid>
-              <Grid item xs={3}>
-                <Button variant="contained" sx={{ height: '100%', width: '80%' }}>
-                  Export PDF
-                </Button>
-              </Grid>
 
-              <Grid item xs={6} sm={6} md={3}>
-                <AppWidgetSummary
-                  title="Tiket Selesai"
-                  total={tiket.length}
-                  icon={'ant-design:file-done-outlined'}
-                  rows={tiket}
-                />
-              </Grid>
+          <Grid item xs={2}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DesktopDatePicker
+                label="Start Date"
+                value={value}
+                onChange={handleChange}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </Grid>
+          <Grid item xs={2}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DesktopDatePicker
+                label="End Date"
+                value={value1}
+                onChange={handleChange1}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </Grid>
+          <Grid item xs={2} justifyContent="center">
+            <Button
+              variant="outlined"
+              sx={{ height: '100%', minWidth: 228, maxWidth: 250 }}
+              onClick={() => {
+                axios
+                  .get(
+                    `http://localhost:3000/api/tiket/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
+                      'YYYY-MM-DD'
+                    )}`
+                  )
+                  .then((response) => {
+                    setTiket(response.data);
+                    console.log(response.data);
+                  })
+                  .catch((e) => {
+                    console.log(e);
+                  });
+              }}
+            >
+              Submit
+            </Button>
+          </Grid>
+          <Grid item xs={6}>
+            <Grid container justifyContent="flex-end" alignItems="stretch">
+              <Button variant="contained" sx={{ width: 200, height: 55 }}>
+                Export PDF
+              </Button>
+            </Grid>
+          </Grid>
 
-              <Grid item xs={6} sm={6} md={3}>
-                <AppWidgetSummary
-                  title="Sesuai Target"
-                  total={targetIn.length}
-                  color="success"
-                  icon={'icon-park-solid:doc-success'}
-                  rows={targetIn}
-                />
-              </Grid>
+          <Grid item xs={6} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Tiket Selesai"
+              total={tiket.length}
+              icon={'ant-design:file-done-outlined'}
+              rows={tiket}
+            />
+          </Grid>
 
-              <Grid item xs={6} sm={6} md={3}>
-                <AppWidgetSummary
-                  title="Keluar Target"
-                  total={targetOut.length}
-                  color="error"
-                  icon={'icon-park-solid:file-failed'}
-                  rows={targetOut}
-                />
-              </Grid>
+          <Grid item xs={6} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Sesuai Target"
+              total={targetIn.length}
+              color="success"
+              icon={'icon-park-solid:doc-success'}
+              rows={targetIn}
+            />
+          </Grid>
 
-              <Grid item xs={12} sm={6} md={3}>
-                <Percentage />
-              </Grid>
+          <Grid item xs={6} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Keluar Target"
+              total={targetOut.length}
+              color="error"
+              icon={'icon-park-solid:file-failed'}
+              rows={targetOut}
+            />
+          </Grid>
 
-              {/* <Grid item xs={6} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={3}>
+            <Percentage />
+          </Grid>
+
+          {/* <Grid item xs={6} sm={6} md={3}>
                 <AppWidgetSummary
                   title="Rate Target"
                   total={rate.toFixed(2)}
@@ -360,8 +361,6 @@ export default function ATM() {
                   icon={'iconoir:percentage-round'}
                 />
               </Grid> */}
-            </Grid>
-          </Grid>
 
           <Grid item xs={12} md={6} lg={12}>
             <Card>

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import moment from 'moment-timezone';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography, Card, Box, TextField } from '@mui/material';
+import { Grid, Container, Typography, Card, Box, TextField, Button } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -19,7 +21,7 @@ import {
   AppWidgetSummary,
   AppCurrentSubject,
   AppConversionRates,
-  Percentage,
+  PerformaRate,
 } from '../sections/@dashboard/app';
 
 const columns = [
@@ -49,6 +51,7 @@ const columns = [
 
 export default function DashboardApp() {
   const theme = useTheme();
+  const [tiket, setTiket] = useState([]);
   const [tiketSelesai, setTiketSelesai] = useState([]);
   const [listTanggal, setListTanggal] = useState([]);
   const [listMinggu, setListMinggu] = useState([]);
@@ -117,6 +120,9 @@ export default function DashboardApp() {
   const crm = listMinggu.map(({ crm }) => crm);
   const edc = listMinggu.map(({ edc }) => edc);
 
+  const total = listMinggu.map(({ total }) => total);
+  const totalIn = listMinggu.map(({ targetIn }) => targetIn);
+
   const [value, setValue] = React.useState(new Date('2022-08-06T21:11:54'));
 
   const [value1, setValue1] = React.useState(new Date('2022-08-06T21:11:54'));
@@ -133,74 +139,115 @@ export default function DashboardApp() {
 
   console.log(value);
 
+  const targetIn = tiket.filter((tiket) => tiket.targetIn === 1);
+  console.log(targetIn);
+
+  const targetOut = tiket.filter((tiket) => tiket.targetIn === 0);
+  console.log(targetOut);
+
   return (
     <Page title="Dashboard">
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ pb: 0.5 }}>
-          Dashboard Kinerja Departemen ITE 2022
+          Kinerja Departemen ITE 2022
         </Typography>
         <Typography sx={{ mb: 4 }}>Tiket Departemen ITE (ATM, CRM, dan EDC)</Typography>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <LocalizationProvider dateAdapter={AdapterDateFns} sx={{ pr:1 }}>
+        <Grid container spacing={4}>
+
+          <Grid item xs={2}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
-                label="Date desktop"
-                // inputFormat="YYYY-MM-DD"
+                label="Start Date"
                 value={value}
                 onChange={handleChange}
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
-            <LocalizationProvider dateAdapter={AdapterDateFns} sx={{ p:1 }}>
+          </Grid>
+          <Grid item xs={2}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
-                label="Date desktop"
-                // inputFormat="YYYY-MM-DD"
+                label="End Date"
                 value={value1}
                 onChange={handleChange1}
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
           </Grid>
+          <Grid item xs={2} justifyContent="center">
+            <Button
+              variant="outlined"
+              sx={{ height: '100%', minWidth: 228, maxWidth: 250 }}
+              onClick={() => {
+                axios
+                  .get(
+                    `http://localhost:3000/api/tiket/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
+                      'YYYY-MM-DD'
+                    )}`
+                  )
+                  .then((response) => {
+                    setTiket(response.data);
+                    console.log(response.data);
+                  })
+                  .catch((e) => {
+                    console.log(e);
+                  });
+              }}
+            >
+              Submit
+            </Button>
+          </Grid>
+
+          <Grid item xs={6}>
+            <Grid container justifyContent="flex-end" alignItems="stretch">
+              <Button variant="contained" sx={{ width: 200, height: 55 }}>
+                Export PDF
+              </Button>
+            </Grid>
+          </Grid>
 
           <Grid item xs={6} sm={6} md={4}>
             <AppWidgetSummary
               title="Tiket Selesai"
-              total={tiketSelesai.tiket_selesai}
+              total={tiket.length}
               icon={'ant-design:file-done-outlined'}
+              rows={tiket}
             />
           </Grid>
 
           <Grid item xs={6} sm={6} md={4}>
             <AppWidgetSummary
               title="Sesuai Target"
-              total={tiketSelesai.targetIn}
+              total={targetIn.length}
               color="success"
               icon={'icon-park-solid:doc-success'}
+              rows={targetIn}
             />
           </Grid>
 
           <Grid item xs={6} sm={6} md={4}>
             <AppWidgetSummary
               title="Keluar Target"
-              total={tiketSelesai.targetOut}
+              total={targetOut.length}
               color="error"
               icon={'icon-park-solid:file-failed'}
+              rows={targetOut}
             />
           </Grid>
 
           {/* <Grid item xs={6} sm={6} md={3}>
-            <AppWidgetSummary
-              title="Rate Target"
-              total={tiketSelesai.rate_target}
-              percent="%"
-              color="secondary"
-              icon={'iconoir:percentage-round'}
-            />
-          </Grid> */}
+                <AppWidgetSummary
+                  title="Rate Target"
+                  total={rate.toFixed(2)}
+                  percent="%"
+                  color="secondary"
+                  icon={'iconoir:percentage-round'}
+                />
+              </Grid> */}
 
           <Grid item xs={12} md={12}>
-            <Percentage />
+            <PerformaRate />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
@@ -232,6 +279,66 @@ export default function DashboardApp() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
+            <AppCurrentVisits
+              title="Current Visits"
+              chartData={bagian.map((item) => {
+                const newItem = { label: item.bagian, value: item.tiket_close };
+                return newItem;
+              })}
+              chartColors={[
+                theme.palette.primary.main,
+                theme.palette.chart.blue[0],
+                // theme.palette.chart.violet[0],
+                theme.palette.chart.yellow[0],
+              ]}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={6}>
+            <AppWebsiteVisits
+              title="Current Closed Ticket"
+              subheader="Departement ITE"
+              chartLabels={minggu}
+              chartData={[
+                {
+                  name: 'Tiket Selesai',
+                  type: 'bar',
+                  fill: 'solid',
+                  data: total,
+                },
+                {
+                  name: 'Sesuai Target',
+                  type: 'bar',
+                  fill: 'solid',
+                  data: totalIn,
+                },
+              ]}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={6}>
+            <AppWebsiteVisits
+              title="Current Closed Ticket"
+              subheader="Departement ITE"
+              chartLabels={minggu}
+              chartData={[
+                {
+                  name: 'Tiket Selesai',
+                  type: 'bar',
+                  fill: 'solid',
+                  data: total,
+                },
+                {
+                  name: 'Sesuai Target',
+                  type: 'bar',
+                  fill: 'solid',
+                  data: totalIn,
+                },
+              ]}
+            />
+          </Grid>
+
+          {/* <Grid item xs={12} md={6} lg={4}>
             <AppConversionRates
               title="Performa Kantor Cabang"
               subheader="Implementor"
@@ -240,9 +347,9 @@ export default function DashboardApp() {
                 return newItem;
               })}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <Card>
               <Box
                 sx={{
@@ -270,34 +377,18 @@ export default function DashboardApp() {
                   columns={columns}
                   pageSize={6}
                   rowsPerPageOptions={[6]}
-                  // sx={{
-                  //   boxShadow: 2,
-                  //   border: 2,
-                  //   borderColor: 'primary.light',
-                  //   '& .MuiDataGrid-cell:hover': {
-                  //     color: 'primary.main',
-                  //   },
-                  // }}
+                sx={{
+                  boxShadow: 2,
+                  border: 2,
+                  borderColor: 'primary.light',
+                  '& .MuiDataGrid-cell:hover': {
+                    color: 'primary.main',
+                  },
+                }}
                 />
               </Box>
             </Card>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits
-              title="Current Visits"
-              chartData={bagian.map((item) => {
-                const newItem = { label: item.bagian, value: item.tiket_close };
-                return newItem;
-              })}
-              // chartColors={[
-              //   theme.palette.primary.main,
-              //   theme.palette.chart.blue[0],
-              //   theme.palette.chart.violet[0],
-              //   theme.palette.chart.yellow[0],
-              // ]}
-            />
-          </Grid>
+          </Grid> */}
 
           {/* <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
