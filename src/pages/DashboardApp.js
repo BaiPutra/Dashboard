@@ -7,6 +7,7 @@ import { Grid, Container, Typography, Card, Box, TextField, Button } from '@mui/
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DataGrid } from '@mui/x-data-grid';
 import { clsx } from 'clsx';
 // data
@@ -63,7 +64,20 @@ export default function DashboardApp() {
     perMinggu();
     performaKanca();
     perBagian();
+    getTiket();
   }, []);
+  const getTiket = () => {
+    axios.get(
+      `http://localhost:3000/api/tiket/2022-${moment().format('MM')}-${moment().format('DD')}/2022-${moment().format('MM')}-${moment().format('DD')}`
+    )
+      .then((response) => {
+        setTiket(response.data);
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+  }
   const closedTicketLastWeek = () => {
     TiketDataService.closedTicketLastWeek()
       .then((response) => {
@@ -120,12 +134,13 @@ export default function DashboardApp() {
   const crm = listMinggu.map(({ crm }) => crm);
   const edc = listMinggu.map(({ edc }) => edc);
 
-  const total = listMinggu.map(({ total }) => total);
-  const totalIn = listMinggu.map(({ targetIn }) => targetIn);
+  const kancaID = listKanca.map(({ id }) => id);
+  const total = listKanca.map(({ total }) => total);
+  const totalIn = listKanca.map(({ targetIn }) => targetIn);
 
-  const [value, setValue] = React.useState(new Date('2022-08-06T21:11:54'));
+  const [value, setValue] = React.useState(new Date());
 
-  const [value1, setValue1] = React.useState(new Date('2022-08-06T21:11:54'));
+  const [value1, setValue1] = React.useState(new Date());
 
   const handleChange = (newValue) => {
     setValue(newValue);
@@ -154,7 +169,21 @@ export default function DashboardApp() {
         <Typography sx={{ mb: 4 }}>Tiket Departemen ITE (ATM, CRM, dan EDC)</Typography>
 
         <Grid container spacing={4}>
-
+          {/* <Grid item xs={2}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                views={['month', 'year']}
+                label="Year and Month"
+                minDate={new Date('2022-01-01')}
+                maxDate={new Date('2022-12-01')}
+                value={value}
+                onChange={(newValue) => {
+                  setValue(newValue);
+                }}
+                renderInput={(params) => <TextField {...params} helperText={null} />}
+              />
+            </LocalizationProvider>
+          </Grid> */}
           <Grid item xs={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
@@ -236,16 +265,6 @@ export default function DashboardApp() {
             />
           </Grid>
 
-          {/* <Grid item xs={6} sm={6} md={3}>
-                <AppWidgetSummary
-                  title="Rate Target"
-                  total={rate.toFixed(2)}
-                  percent="%"
-                  color="secondary"
-                  icon={'iconoir:percentage-round'}
-                />
-              </Grid> */}
-
           <Grid item xs={12} md={12}>
             <PerformaRate />
           </Grid>
@@ -288,7 +307,6 @@ export default function DashboardApp() {
               chartColors={[
                 theme.palette.primary.main,
                 theme.palette.chart.blue[0],
-                // theme.palette.chart.violet[0],
                 theme.palette.chart.yellow[0],
               ]}
             />
@@ -296,27 +314,27 @@ export default function DashboardApp() {
 
           <Grid item xs={12} md={6} lg={6}>
             <AppWebsiteVisits
-              title="Current Closed Ticket"
+              title="Performa Kantor Cabang"
               subheader="Departement ITE"
-              chartLabels={minggu}
+              chartLabels={kancaID.slice(0, 5)}
               chartData={[
                 {
                   name: 'Tiket Selesai',
                   type: 'bar',
                   fill: 'solid',
-                  data: total,
+                  data: total.slice(0, 5),
                 },
                 {
                   name: 'Sesuai Target',
                   type: 'bar',
                   fill: 'solid',
-                  data: totalIn,
+                  data: totalIn.slice(0, 5),
                 },
               ]}
             />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={6}>
+          {/* <Grid item xs={12} md={6} lg={6}>
             <AppWebsiteVisits
               title="Current Closed Ticket"
               subheader="Departement ITE"
@@ -336,7 +354,7 @@ export default function DashboardApp() {
                 },
               ]}
             />
-          </Grid>
+          </Grid> */}
 
           {/* <Grid item xs={12} md={6} lg={4}>
             <AppConversionRates
