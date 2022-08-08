@@ -11,7 +11,6 @@ import { clsx } from 'clsx';
 import TiketDataService from '../helper/services';
 // components
 import Page from '../components/Page';
-import Iconify from '../components/Iconify';
 // sections
 import {
   AppCurrentVisits,
