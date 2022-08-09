@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-// @mui
 import PropTypes from 'prop-types';
+// @mui
 import { alpha, styled } from '@mui/material/styles';
 import { Typography, Card, Box, Modal, Button } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 // components
 import Iconify from '../../../components/Iconify';
-
-// ----------------------------------------------------------------------
 
 const columns = [
   { field: 'id', headerName: '#', flex: 0.5 },

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment-timezone';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 // @mui
-import { Grid, Container, Typography, Card, Box, Modal, Stack, TextField, Button, Link } from '@mui/material';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { Grid, Container, Typography, Card, Box, Stack, TextField, Button } from '@mui/material';
+import { DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
+
 import { clsx } from 'clsx';
-// data
 import { CSVLink } from 'react-csv';
 import TiketDataService from '../helper/services';
 // components
@@ -16,11 +17,10 @@ import Page from '../components/Page';
 // sections
 import {
   AppWidgetSummary,
-  Statistics,
-  TableCard,
   AppWebsiteVisits,
   AppConversionRates,
   Percentage,
+  PerformaTable,
 } from '../sections/@dashboard/app';
 
 const columns = [
@@ -86,84 +86,27 @@ const columns = [
   },
 ];
 
-const columns2 = [
-  { field: 'id', headerName: 'No', width: 50 },
-  { field: 'nama', headerName: 'Implementor', width: 280 },
-  { field: 'total', headerName: 'Tiket Selesai', type: 'number', width: 110, align: 'center' },
-  { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', width: 110, align: 'center' },
-  { field: 'targetOut', headerName: 'Keluar Target', type: 'number', width: 110, align: 'center' },
-  {
-    field: 'rateTarget',
-    headerName: 'Persentase',
-    type: 'number',
-    width: 100,
-    align: 'center',
-    cellClassName: (params) => {
-      if (params.value == null) {
-        return '';
-      }
-
-      return clsx('super-app', {
-        negative: params.value < 80,
-        positive: params.value > 80,
-      });
-    },
-  },
-];
-
-const columns3 = [
-  { field: 'id', headerName: 'No', flex: 0.5 },
-  { field: 'nama', headerName: 'Kantor Cabang', flex: 2 },
-  { field: 'total', headerName: 'Tiket Selesai', type: 'number', flex: 1 },
-  {
-    field: 'rateTarget',
-    headerName: 'Persentase',
-    type: 'number',
-    flex: 1,
-    cellClassName: (params) => {
-      if (params.value == null) {
-        return '';
-      }
-
-      return clsx('super-app', {
-        negative: params.value < 80,
-        positive: params.value > 80,
-      });
-    },
-  },
-];
-
-const style = {
-  height: 580,
-  padding: 1,
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '70%',
-  bgcolor: 'background.paper',
-  borderRadius: 2,
-  border: '1px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
-
 export default function ATM() {
+  const { bagian } = useParams();
+  const initialKanca = {
+    bagian: 'ATM',
+  };
+
   const [tiket, setTiket] = useState([]);
   const [listTanggal, setListTanggal] = useState([]);
-  const [listKanca, setListKanca] = useState([]);
-  const [jenisTiket, setJenisTiket] = useState([]);
   const [listMinggu, setListMinggu] = useState([]);
+  const [listKanca, setListKanca] = useState(initialKanca);
+  const [jenisTiket, setJenisTiket] = useState([]);
   const [Implementor, setImplementor] = useState([]);
 
   useEffect(() => {
+    performaKanca(bagian);
     getAll();
     perTanggal();
-    performaKanca();
     perJenisMasalah();
     perMinggu();
     performaPemasang();
-  }, []);
+  }, [bagian]);
 
   const getAll = () => {
     TiketDataService.getAll()
@@ -185,8 +128,8 @@ export default function ATM() {
         console.log(e);
       });
   };
-  const performaKanca = () => {
-    TiketDataService.performaKanca()
+  const performaKanca = bagian => {
+    TiketDataService.performaKanca(bagian)
       .then((response) => {
         setListKanca(response.data);
         // console.log(response.data);
@@ -240,24 +183,16 @@ export default function ATM() {
   console.log(rate);
 
   const [value, setValue] = React.useState(new Date());
-
   const [value1, setValue1] = React.useState(new Date());
 
   const handleChange = (newValue) => {
     setValue(newValue);
   };
-
   const handleChange1 = (newValue) => {
     setValue1(newValue);
   };
 
   const newJenisTiket = jenisTiket.slice(0, 5);
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const [pageSize, setPageSize] = React.useState(10);
 
   return (
     <Page title="ATM">
@@ -267,7 +202,6 @@ export default function ATM() {
         </Typography>
 
         <Grid container spacing={4}>
-
           <Grid item xs={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
@@ -278,6 +212,7 @@ export default function ATM() {
               />
             </LocalizationProvider>
           </Grid>
+
           <Grid item xs={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
@@ -288,6 +223,7 @@ export default function ATM() {
               />
             </LocalizationProvider>
           </Grid>
+
           <Grid item xs={2} justifyContent="center">
             <Button
               variant="outlined"
@@ -295,7 +231,7 @@ export default function ATM() {
               onClick={() => {
                 axios
                   .get(
-                    `http://localhost:3000/api/tiket/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
+                    `http://localhost:3001/api/tiket/'ATM'/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
                       'YYYY-MM-DD'
                     )}`
                   )
@@ -311,6 +247,7 @@ export default function ATM() {
               Submit
             </Button>
           </Grid>
+          
           <Grid item xs={6}>
             <Grid container justifyContent="flex-end" alignItems="stretch">
               <Button variant="contained" sx={{ width: 200, height: 55 }}>
@@ -349,18 +286,11 @@ export default function ATM() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <Percentage />
+            <Percentage
+              title='Persentase'
+              value={rate.toFixed(1)}
+            />
           </Grid>
-
-          {/* <Grid item xs={6} sm={6} md={3}>
-                <AppWidgetSummary
-                  title="Rate Target"
-                  total={rate.toFixed(2)}
-                  percent="%"
-                  color="secondary"
-                  icon={'iconoir:percentage-round'}
-                />
-              </Grid> */}
 
           <Grid item xs={12} md={6} lg={12}>
             <Card>
@@ -368,15 +298,15 @@ export default function ATM() {
                 <Typography variant="h6" sx={{ pl: 3, pt: 3, pb: 1 }}>
                   Ticket Handle Last Week
                 </Typography>
-                <Box sx={{ pr: 5, pt: 3, pb: 1 }}>
+                {/* <Box sx={{ pr: 5, pt: 3, pb: 1 }}>
                   <CSVLink data={jenisTiket} filename={'file.csv'}>
                     Download CSV
                   </CSVLink>
-                </Box>
+                </Box> */}
               </Stack>
               <Box
                 sx={{
-                  height: 330,
+                  height: 400,
                   padding: 1,
                   '& .super-app-theme--cell': {
                     backgroundColor: 'rgba(224, 183, 60, 0.55)',
@@ -405,15 +335,15 @@ export default function ATM() {
                   },
                 }}
               >
-                <DataGrid rows={listTanggal} columns={columns} pageSize={6} rowsPerPageOptions={[6]} />
+                <DataGrid hideFooter="true" rows={listTanggal} columns={columns} />
               </Box>
             </Card>
           </Grid>
 
           <Grid item xs={12} md={6} lg={6}>
             <AppWebsiteVisits
-              title="Current Closed Ticket"
-              subheader="Departement ITE"
+              title="Tiket Selesai Per Minggu"
+              subheader="ATM Section"
               chartLabels={minggu}
               chartData={[
                 {
@@ -433,67 +363,11 @@ export default function ATM() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={6}>
-            <Card>
-              <Stack direction="row" justifyContent="space-between">
-                <Typography variant="h6" sx={{ pl: 3, pt: 3, pb: 1 }}>
-                  Performa Kantor Cabang
-                </Typography>
-                <Box sx={{ pr: 5, pt: 3, pb: 1 }}>
-                  <Button variant="text" onClick={handleOpen}>
-                    Lihat Semua
-                  </Button>
-                </Box>
-                <Modal
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-                >
-                  <Box sx={style}>
-                    <DataGrid
-                      rows={listKanca}
-                      columns={columns3}
-                      pageSize={pageSize}
-                      onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                      rowsPerPageOptions={[10, 15, 20]}
-                      pagination
-                      disableColumnSelector
-                      disableDensitySelector
-                      components={{ Toolbar: GridToolbar }}
-                      componentsProps={{
-                        toolbar: {
-                          showQuickFilter: true,
-                          quickFilterProps: { debounceMs: 1000 },
-                        },
-                      }}
-                    />
-                  </Box>
-                </Modal>
-              </Stack>
-              <Box
-                sx={{
-                  height: 416,
-                  padding: 2,
-                  '& .super-app-theme--cell': {
-                    backgroundColor: 'rgba(224, 183, 60, 0.55)',
-                    color: '#1a3e72',
-                    fontWeight: '600',
-                  },
-                  '& .super-app.negative': {
-                    backgroundColor: '#d47483',
-                    color: '#1a3e72',
-                    fontWeight: '600',
-                  },
-                  '& .super-app.positive': {
-                    backgroundColor: 'rgba(157, 255, 118, 0.49)',
-                    color: '#1a3e72',
-                    fontWeight: '600',
-                  },
-                }}
-              >
-                <DataGrid hideFooter="true" rows={listKanca} columns={columns3} pageSize={6} />
-              </Box>
-            </Card>
+            <PerformaTable
+              header='Kantor Cabang'
+              title='Performa Kantor Cabang'
+              rows={listKanca}
+            />
           </Grid>
 
           <Grid item xs={12} md={6} lg={6}>
@@ -502,83 +376,20 @@ export default function ATM() {
               subheader="ATM Section"
               chartData={newJenisTiket.map((item) => {
                 const newItem = { label: item.nama, value: item.tiketClose };
-                // console.log('jaja', newItem)
                 return newItem;
               })}
+              header='Jenis Masalah'
+              rows={jenisTiket}
             />
           </Grid>
 
           <Grid item xs={12} md={6} lg={6}>
-            <Card>
-              <Stack direction="row" justifyContent="space-between">
-                <Typography variant="h6" sx={{ pl: 3, pt: 3, pb: 1 }}>
-                  Performa Implementor
-                </Typography>
-                <Box sx={{ pr: 5, pt: 3, pb: 1 }}>
-                  <Link variant="body2" onClick={handleOpen} href="#">
-                    Lihat Semua
-                  </Link>
-                </Box>
-                <Modal
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-                >
-                  <Box sx={style}>
-                    <DataGrid
-                      rows={Implementor}
-                      columns={columns2}
-                      pageSize={pageSize}
-                      onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                      rowsPerPageOptions={[10, 15, 20]}
-                      pagination
-                      disableColumnSelector
-                      disableDensitySelector
-                      components={{ Toolbar: GridToolbar }}
-                      componentsProps={{
-                        toolbar: {
-                          showQuickFilter: true,
-                          quickFilterProps: { debounceMs: 1000 },
-                        },
-                      }}
-                    />
-                  </Box>
-                </Modal>
-              </Stack>
-              <Box
-                sx={{
-                  height: 430,
-                  padding: 2,
-                  '& .super-app-theme--cell': {
-                    backgroundColor: 'rgba(224, 183, 60, 0.55)',
-                    color: '#1a3e72',
-                    fontWeight: '600',
-                  },
-                  '& .super-app.negative': {
-                    backgroundColor: '#d47483',
-                    color: '#1a3e72',
-                    fontWeight: '600',
-                  },
-                  '& .super-app.positive': {
-                    backgroundColor: 'rgba(157, 255, 118, 0.49)',
-                    color: '#1a3e72',
-                    fontWeight: '600',
-                  },
-                }}
-              >
-                <DataGrid hideFooter="true" rows={Implementor} columns={columns2} pageSize={6} />
-              </Box>
-            </Card>
+            <PerformaTable 
+              header='Implementor'
+              title='Performa Implementor'
+              rows={Implementor}
+            />
           </Grid>
-
-          {/* <Grid item xs={12} md={8}>
-            <Statistics />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <TableCard />
-          </Grid> */}
         </Grid>
       </Container>
     </Page>

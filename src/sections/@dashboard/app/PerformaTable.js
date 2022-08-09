@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import merge from 'lodash/merge';
-import ReactApexChart from 'react-apexcharts';
 // @mui
-import { Box, Card, CardHeader, Stack, Button, Modal } from '@mui/material';
+import { Typography, Card, Box, Modal, Stack, Button } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { clsx } from 'clsx';
-// utils
-import { fNumber } from '../../../utils/formatNumber';
-// components
-import { BaseOptionChart } from '../../../components/chart';
 
 const style = {
   height: 580,
@@ -41,21 +35,20 @@ const style = {
   },
 };
 
-AppConversionRates.propTypes = {
+PerformaTable.propTypes = {
   header: PropTypes.string,
-  title: PropTypes.string,
-  subheader: PropTypes.string,
-  chartData: PropTypes.array.isRequired,
+  title: PropTypes.string.isRequired,
   rows: PropTypes.array,
-};
+}
 
-export default function AppConversionRates({ header, title, subheader, chartData, rows, ...other }) {
-  const details = [
+export default function PerformaTable({ header, title, rows }) {
+  const columns = [
     { field: 'id', headerName: 'No', flex: 0.5 },
     { field: 'nama', headerName: header, flex: 2 },
-    { field: 'tiketClose', headerName: 'Tiket Selesai', type: 'number', headerAlign: 'center', align: 'center', flex: 1 },
-    { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1 },
-    { field: 'targetOut', headerName: 'Keluar Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1 },
+    {
+      field: 'total', headerName: 'Tiket Selesai', type: 'number', headerAlign: 'center',
+      align: 'center', flex: 1
+    },
     {
       field: 'rateTarget',
       headerName: 'Persentase (%)',
@@ -75,27 +68,33 @@ export default function AppConversionRates({ header, title, subheader, chartData
     },
   ];
 
-  const chartLabels = chartData.map((i) => i.label);
-
-  const chartSeries = chartData.map((i) => i.value);
-
-  const chartOptions = merge(BaseOptionChart(), {
-    tooltip: {
-      marker: { show: false },
-      y: {
-        formatter: (seriesName) => fNumber(seriesName),
-        title: {
-          formatter: () => '',
-        },
+  const details = [
+    { field: 'id', headerName: 'No', flex: 0.5 },
+    { field: 'nama', headerName: header, flex: 2 },
+    { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1 },
+    { field: 'targetOut', headerName: 'Keluar Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1 },
+    {
+      field: 'total', headerName: 'Tiket Selesai', type: 'number', headerAlign: 'center',
+      align: 'center', flex: 1
+    },
+    {
+      field: 'rateTarget',
+      headerName: 'Persentase (%)',
+      type: 'number',
+      flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      cellClassName: (params) => {
+        if (params.value == null) {
+          return '';
+        }
+        return clsx('super-app', {
+          negative: params.value < 80,
+          positive: params.value > 80,
+        });
       },
     },
-    plotOptions: {
-      bar: { horizontal: true, barHeight: '35%', borderRadius: 2 },
-    },
-    xaxis: {
-      categories: chartLabels,
-    },
-  });
+  ];
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -104,9 +103,11 @@ export default function AppConversionRates({ header, title, subheader, chartData
   const [pageSize, setPageSize] = React.useState(10);
 
   return (
-    <Card {...other}>
+    <Card>
       <Stack direction="row" justifyContent="space-between">
-        <CardHeader title={title} subheader={subheader} />
+        <Typography variant="h6" sx={{ pl: 3, pt: 3, pb: 1 }}>
+          {title}
+        </Typography>
         <Box sx={{ pr: 5, pt: 3, pb: 1 }}>
           <Button variant="text" onClick={handleOpen}>
             Lihat Semua
@@ -139,9 +140,28 @@ export default function AppConversionRates({ header, title, subheader, chartData
           </Box>
         </Modal>
       </Stack>
-
-      <Box sx={{ mx: 3 }} dir="ltr">
-        <ReactApexChart type="bar" series={[{ data: chartSeries }]} options={chartOptions} height={400} />
+      <Box
+        sx={{
+          height: 416,
+          padding: 2,
+          '& .super-app-theme--cell': {
+            backgroundColor: 'rgba(224, 183, 60, 0.55)',
+            color: '#1a3e72',
+            fontWeight: '600',
+          },
+          '& .super-app.negative': {
+            backgroundColor: '#d47483',
+            color: '#1a3e72',
+            fontWeight: '600',
+          },
+          '& .super-app.positive': {
+            backgroundColor: 'rgba(157, 255, 118, 0.49)',
+            color: '#1a3e72',
+            fontWeight: '600',
+          },
+        }}
+      >
+        <DataGrid hideFooter="true" rows={rows} columns={columns} pageSize={6} />
       </Box>
     </Card>
   );

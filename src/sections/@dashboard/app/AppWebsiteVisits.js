@@ -12,7 +12,8 @@ AppWebsiteVisits.propTypes = {
   title: PropTypes.string,
   subheader: PropTypes.string,
   chartData: PropTypes.array.isRequired,
-  chartLabels: PropTypes.arrayOf(PropTypes.string).isRequired,
+  chartLabels: PropTypes.array.isRequired,
+  // chartLabels: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default function AppWebsiteVisits({ title, subheader, chartLabels, chartData, ...other }) {

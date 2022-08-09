@@ -68,7 +68,7 @@ export default function DashboardApp() {
   }, []);
   const getTiket = () => {
     axios.get(
-      `http://localhost:3000/api/tiket/2022-${moment().format('MM')}-${moment().format('DD')}/2022-${moment().format('MM')}-${moment().format('DD')}`
+      `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/2022-${moment().format('MM')}-${moment().format('DD')}/2022-${moment().format('MM')}-${moment().format('DD')}`
     )
       .then((response) => {
         setTiket(response.data);
@@ -211,7 +211,7 @@ export default function DashboardApp() {
               onClick={() => {
                 axios
                   .get(
-                    `http://localhost:3000/api/tiket/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
+                    `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
                       'YYYY-MM-DD'
                     )}`
                   )

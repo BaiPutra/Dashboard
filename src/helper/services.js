@@ -1,13 +1,17 @@
 import moment from 'moment-timezone';
 import http from './http-common';
 
-const getAll = () => {
-  return http.get(`/tiket/${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}/${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}`);
+const getAll = (bagian) => {
+  return http.get(`/${bagian}/${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}/${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}`);
 };
 
-const closedTicketLastWeek = () => {
-  return http.get('/tiket/closedTicketLastWeek');
+const closedTicketLastWeek = bagian => {
+  return http.get(`/tiket/closedTicketLastWeek/${bagian}`);
 };
+
+const performaKanca = () => {
+  return http.get('/tiket/performaKanca');
+}
 
 const performaPemasang = () => {
   return http.get('/tiket/performaPemasang');
@@ -24,10 +28,6 @@ const perTanggal = () => {
 const perMinggu = () => {
   return http.get('/tiket/perMinggu');
 };
-
-const performaKanca = () => {
-  return http.get('/tiket/performaKanca');
-}
 
 const perBagian = () => {
   return http.get('/tiket/perBagian');

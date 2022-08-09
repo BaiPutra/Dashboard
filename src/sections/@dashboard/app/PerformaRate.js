@@ -23,7 +23,7 @@ export default function Percentage() {
   const today = todayDate.toISOString().slice(0, 10);
   todayDate.setDate(todayDate.getDate() - 1);
   const lastDay = todayDate.toISOString().slice(0, 10);
-  todayDate.setDate(todayDate.getDate() - 7);
+  todayDate.setDate(todayDate.getDate() - 6);
   const lastWeek = todayDate.toISOString().slice(0, 10);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function Percentage() {
 
   const getAll = () => {
     axios.get(
-      `http://localhost:3000/api/tiket/2022-01-01/2022-${moment().format('MM')}-${moment().format('DD')}`
+      `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/2022-01-01/2022-${moment().format('MM')}-${moment().format('DD')}`
     )
       .then((response) => {
         setTiket(response.data);
@@ -48,7 +48,7 @@ export default function Percentage() {
 
   const getThisMonth = () => {
     axios.get(
-      `http://localhost:3000/api/tiket/2022-${moment().format('DD')}-01/2022-${moment().format('MM')}-${moment().format('DD')}`
+      `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/2022-${moment().format('MM')}-01/2022-${moment().format('MM')}-${moment().format('DD')}`
     )
       .then((response) => {
         setThisMonth(response.data);
@@ -61,7 +61,7 @@ export default function Percentage() {
 
   const getThisWeek = () => {
     axios.get(
-      `http://localhost:3000/api/tiket/${lastWeek}/${today}`
+      `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/${lastWeek}/${today}`
     )
       .then((response) => {
         setThisWeek(response.data);
@@ -74,7 +74,7 @@ export default function Percentage() {
 
   const getYesterday = () => {
     axios.get(
-      `http://localhost:3000/api/tiket/${lastDay}/${today}`
+      `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/${lastDay}/${today}`
     )
       .then((response) => {
         setYesterday(response.data);
