@@ -87,17 +87,16 @@ const columns = [
 ];
 
 export default function ATM() {
-  const { bagian } = useParams();
-  const initialKanca = {
-    bagian: 'ATM',
-  };
+  const bagian = '1';
 
   const [tiket, setTiket] = useState([]);
   const [listTanggal, setListTanggal] = useState([]);
   const [listMinggu, setListMinggu] = useState([]);
-  const [listKanca, setListKanca] = useState(initialKanca);
+  const [listKanca, setListKanca] = useState([]);
   const [jenisTiket, setJenisTiket] = useState([]);
   const [Implementor, setImplementor] = useState([]);
+
+  console.log();
 
   useEffect(() => {
     performaKanca(bagian);
@@ -201,14 +200,14 @@ export default function ATM() {
           ATM Section
         </Typography>
 
-        <Grid container spacing={4}>
+        <Grid container spacing={2}>
           <Grid item xs={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
                 label="Start Date"
                 value={value}
                 onChange={handleChange}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params) => <TextField size='small' {...params} />}
               />
             </LocalizationProvider>
           </Grid>
@@ -219,7 +218,7 @@ export default function ATM() {
                 label="End Date"
                 value={value1}
                 onChange={handleChange1}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params) => <TextField size='small' {...params} />}
               />
             </LocalizationProvider>
           </Grid>
@@ -227,7 +226,7 @@ export default function ATM() {
           <Grid item xs={2} justifyContent="center">
             <Button
               variant="outlined"
-              sx={{ height: '100%', minWidth: 228, maxWidth: 250 }}
+              sx={{ height: '100%', width: '100%' }}
               onClick={() => {
                 axios
                   .get(
@@ -250,7 +249,7 @@ export default function ATM() {
           
           <Grid item xs={6}>
             <Grid container justifyContent="flex-end" alignItems="stretch">
-              <Button variant="contained" sx={{ width: 200, height: 55 }}>
+              <Button variant="contained" sx={{ width: '30%', height: 40 }}>
                 Export PDF
               </Button>
             </Grid>
@@ -306,7 +305,7 @@ export default function ATM() {
               </Stack>
               <Box
                 sx={{
-                  height: 400,
+                  height: 330,
                   padding: 1,
                   '& .super-app-theme--cell': {
                     backgroundColor: 'rgba(224, 183, 60, 0.55)',
@@ -335,7 +334,7 @@ export default function ATM() {
                   },
                 }}
               >
-                <DataGrid hideFooter="true" rows={listTanggal} columns={columns} />
+                <DataGrid hideFooter="true" rows={listTanggal} columns={columns} density='compact' sx={{ p:1 }} />
               </Box>
             </Card>
           </Grid>

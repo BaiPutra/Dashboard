@@ -5,12 +5,12 @@ const getAll = (bagian) => {
   return http.get(`/${bagian}/${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}/${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}`);
 };
 
-const closedTicketLastWeek = bagian => {
-  return http.get(`/tiket/closedTicketLastWeek/${bagian}`);
+const closedTicketLastWeek = () => {
+  return http.get(`/tiket/closedTicketLastWeek/`);
 };
 
-const performaKanca = () => {
-  return http.get('/tiket/performaKanca');
+const performaKanca = bagian => {
+  return http.get(`/tiket/performaKanca/${bagian}`);
 }
 
 const performaPemasang = () => {

@@ -163,12 +163,12 @@ export default function DashboardApp() {
   return (
     <Page title="Dashboard">
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ pb: 0.5 }}>
+        <Typography variant="h4" sx={{ pb: 0.5, mb: 4 }}>
           Kinerja Departemen ITE 2022
         </Typography>
-        <Typography sx={{ mb: 4 }}>Tiket Departemen ITE (ATM, CRM, dan EDC)</Typography>
+        {/* <Typography sx={{ mb: 4 }}>Tiket Departemen ITE (ATM, CRM, dan EDC)</Typography> */}
 
-        <Grid container spacing={4}>
+        <Grid container spacing={2}>
           {/* <Grid item xs={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
@@ -190,7 +190,7 @@ export default function DashboardApp() {
                 label="Start Date"
                 value={value}
                 onChange={handleChange}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params) => <TextField size='small' {...params} />}
               />
             </LocalizationProvider>
           </Grid>
@@ -200,14 +200,14 @@ export default function DashboardApp() {
                 label="End Date"
                 value={value1}
                 onChange={handleChange1}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params) => <TextField size='small' {...params} />}
               />
             </LocalizationProvider>
           </Grid>
           <Grid item xs={2} justifyContent="center">
             <Button
               variant="outlined"
-              sx={{ height: '100%', minWidth: 228, maxWidth: 250 }}
+              sx={{ height: '100%', width: '100%' }}
               onClick={() => {
                 axios
                   .get(
@@ -230,7 +230,7 @@ export default function DashboardApp() {
 
           <Grid item xs={6}>
             <Grid container justifyContent="flex-end" alignItems="stretch">
-              <Button variant="contained" sx={{ width: 200, height: 55 }}>
+              <Button variant="contained" sx={{ width: '30%', height: 40 }}>
                 Export PDF
               </Button>
             </Grid>

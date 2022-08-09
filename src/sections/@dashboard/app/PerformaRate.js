@@ -11,7 +11,7 @@ import useResponsive from '../../../hooks/useResponsive';
 //
 import { BaseOptionChart } from '../../../components/chart';
 
-const CHART_SIZE = { width: 120, height: 145 };
+const CHART_SIZE = { width: 120, height: 135 };
 
 export default function Percentage() {
   const [tiket, setTiket] = useState([]);
@@ -34,56 +34,60 @@ export default function Percentage() {
   }, []);
 
   const getAll = () => {
-    axios.get(
-      `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/2022-01-01/2022-${moment().format('MM')}-${moment().format('DD')}`
-    )
+    axios
+      .get(
+        `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/2022-01-01/2022-${moment().format('MM')}-${moment().format(
+          'DD'
+        )}`
+      )
       .then((response) => {
         setTiket(response.data);
         console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
-      })
-  }
+      });
+  };
 
   const getThisMonth = () => {
-    axios.get(
-      `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/2022-${moment().format('MM')}-01/2022-${moment().format('MM')}-${moment().format('DD')}`
-    )
+    axios
+      .get(
+        `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/2022-${moment().format('MM')}-01/2022-${moment().format(
+          'MM'
+        )}-${moment().format('DD')}`
+      )
       .then((response) => {
         setThisMonth(response.data);
         console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
-      })
-  }
+      });
+  };
 
   const getThisWeek = () => {
-    axios.get(
-      `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/${lastWeek}/${today}`
-    )
+    axios
+      .get(`http://localhost:3001/api/tiket/'ATM','CRM','EDC'/${lastWeek}/${today}`)
       .then((response) => {
         setThisWeek(response.data);
         console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
-      })
-  }
+      });
+  };
 
   const getYesterday = () => {
-    axios.get(
-      `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/${lastDay}/${today}`
-    )
+    axios
+      .get(`http://localhost:3001/api/tiket/'ATM','CRM','EDC'/${lastDay}/${today}`)
       .then((response) => {
         setYesterday(response.data);
         console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
-      })
-  }
+      });
+  };
 
   const TARGET_YEAR = tiket.filter((tiket) => tiket.targetIn === 1);
   const CHART_DATA_THIS_YEAR = (TARGET_YEAR.length / tiket.length) * 100;
@@ -103,10 +107,16 @@ export default function Percentage() {
 
   const chartOptionsCheckIn = merge(BaseOptionChart(), {
     chart: { sparkline: { enabled: true } },
+    grid: {
+      padding: {
+        top: -9,
+        bottom: -9,
+      },
+    },
     legend: { show: false },
     plotOptions: {
       radialBar: {
-        hollow: { size: '58%' },
+        hollow: { size: '65%' },
         track: { margin: 0 },
         dataLabels: {
           name: { show: false },
@@ -127,7 +137,7 @@ export default function Percentage() {
           <Divider orientation={isDesktop ? 'vertical' : 'horizontal'} flexItem sx={{ borderStyle: 'dashed' }} />
         }
       >
-        <Stack direction="row" alignItems="center" justifyContent="center" spacing={3} sx={{ width: 1, py: 5 }}>
+        <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} sx={{ width: 1, py: 3 }}>
           <ReactApexChart
             type="radialBar"
             series={[CHART_DATA_THIS_YESTERDAY.toFixed(2)]}
@@ -135,16 +145,16 @@ export default function Percentage() {
             {...CHART_SIZE}
           />
           <div>
-            <Typography variant="h4" sx={{ mb: 0.5 }}>
+            <Typography variant="h6" sx={{ mb: 0.2 }}>
               {yesterday.length} tiket
             </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.72 }}>
+            <Typography variant="caption" sx={{ opacity: 0.72 }}>
               Performa Kemarin
             </Typography>
           </div>
         </Stack>
 
-        <Stack direction="row" alignItems="center" justifyContent="center" spacing={3} sx={{ width: 1, py: 5 }}>
+        <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} sx={{ width: 1, py: 3 }}>
           <ReactApexChart
             type="radialBar"
             series={[CHART_DATA_THIS_WEEK.toFixed(2)]}
@@ -152,16 +162,16 @@ export default function Percentage() {
             {...CHART_SIZE}
           />
           <div>
-            <Typography variant="h4" sx={{ mb: 0.5 }}>
+            <Typography variant="h6" sx={{ mb: 0.2 }}>
               {thisWeek.length} tiket
             </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.72 }}>
+            <Typography variant="caption" sx={{ opacity: 0.72 }}>
               Performa Minggu Ini
             </Typography>
           </div>
         </Stack>
 
-        <Stack direction="row" alignItems="center" justifyContent="center" spacing={3} sx={{ width: 1, py: 5 }}>
+        <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} sx={{ width: 1, py: 3 }}>
           <ReactApexChart
             type="radialBar"
             series={[CHART_DATA_THIS_MONTH.toFixed(2)]}
@@ -169,16 +179,16 @@ export default function Percentage() {
             {...CHART_SIZE}
           />
           <div>
-            <Typography variant="h4" sx={{ mb: 0.5 }}>
+            <Typography variant="h6" sx={{ mb: 0.2 }}>
               {thisMonth.length} tiket
             </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.72 }}>
+            <Typography variant="caption" sx={{ opacity: 0.72 }}>
               Performa Bulan Ini
             </Typography>
           </div>
         </Stack>
 
-        <Stack direction="row" alignItems="center" justifyContent="center" spacing={3} sx={{ width: 1, py: 5 }}>
+        <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} sx={{ width: 1, py: 3 }}>
           <ReactApexChart
             type="radialBar"
             series={[CHART_DATA_THIS_YEAR.toFixed(2)]}
@@ -186,15 +196,14 @@ export default function Percentage() {
             {...CHART_SIZE}
           />
           <div>
-            <Typography variant="h4" sx={{ mb: 0.5 }}>
+            <Typography variant="h6" sx={{ mb: 0.2 }}>
               {tiket.length} tiket
             </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.72 }}>
+            <Typography variant="caption" sx={{ opacity: 0.72 }}>
               Performa Tahun Ini
             </Typography>
           </div>
         </Stack>
-
       </Stack>
     </Card>
   );

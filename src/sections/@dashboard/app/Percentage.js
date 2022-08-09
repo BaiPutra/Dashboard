@@ -8,7 +8,7 @@ import { Card, Typography, Stack, Divider } from '@mui/material';
 import useResponsive from '../../../hooks/useResponsive';
 import { BaseOptionChart } from '../../../components/chart';
 
-const CHART_SIZE = { width: 150, height: 145 };
+const CHART_SIZE = { width: '100%', height: 115 };
 
 Percentage.propTypes = {
   title: PropTypes.string.isRequired,
