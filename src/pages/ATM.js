@@ -8,6 +8,8 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DataGrid } from '@mui/x-data-grid';
 
+import { value, value1 } from '../sections/@dashboard/app/PerformaTable';
+
 import { clsx } from 'clsx';
 import TiketDataService from '../helper/services';
 // components
@@ -20,6 +22,8 @@ import {
   Percentage,
   PerformaTable,
 } from '../sections/@dashboard/app';
+
+console.log(value);
 
 const columns = [
   { field: 'id', headerName: 'No', flex: 0.4 },
@@ -349,33 +353,7 @@ export default function ATM() {
               header='Kantor Cabang'
               title='Performa Kantor Cabang'
               rows={listKanca}
-              getStartDate={(newValue) => {
-                const firstDay = new Date(newValue.getFullYear(), newValue.getMonth(), 1);
-                setValue(firstDay);
-                // return firstDay
-                console.log(firstDay);
-              }}
-              getEndDate={(newValue1) => {
-                const lastDay = new Date(newValue1.getFullYear(), newValue1.getMonth() + 1, 0);
-                setValue1(lastDay);
-                // return lastDay
-                console.log(lastDay);
-              }}
-              submit={() => {
-                axios
-                  .get(
-                    `http://localhost:3001/api/tiket/${bagian}/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
-                      'YYYY-MM-DD'
-                    )}`
-                  )
-                  .then((response) => {
-                    setTiket(response.data);
-                    // console.log(response.data);
-                  })
-                  .catch((e) => {
-                    // console.log(e);
-                  });
-              }}
+              bagian={bagian}
             />
           </Grid>
 

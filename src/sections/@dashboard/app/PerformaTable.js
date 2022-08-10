@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import moment from 'moment-timezone';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 // @mui
 import { Typography, Card, Box, Modal, Stack, Button, TextField } from '@mui/material';
@@ -42,15 +44,19 @@ PerformaTable.propTypes = {
   header: PropTypes.string,
   title: PropTypes.string.isRequired,
   rows: PropTypes.array,
-}
+};
 
-export default function PerformaTable({ header, title, rows, getStartDate, getEndDate, submit }) {
+export default function PerformaTable({ header, title, rows, bagian }) {
   const columns = [
     { field: 'id', headerName: 'No', flex: 0.5 },
     { field: 'nama', headerName: header, flex: 2 },
     {
-      field: 'total', headerName: 'Tiket Selesai', type: 'number', headerAlign: 'center',
-      align: 'center', flex: 1
+      field: 'total',
+      headerName: 'Tiket Selesai',
+      type: 'number',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
     },
     {
       field: 'rateTarget',
@@ -75,10 +81,21 @@ export default function PerformaTable({ header, title, rows, getStartDate, getEn
     { field: 'id', headerName: 'No', flex: 0.5 },
     { field: 'nama', headerName: header, flex: 2 },
     { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1 },
-    { field: 'targetOut', headerName: 'Keluar Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1 },
     {
-      field: 'total', headerName: 'Tiket Selesai', type: 'number', headerAlign: 'center',
-      align: 'center', flex: 1
+      field: 'targetOut',
+      headerName: 'Keluar Target',
+      type: 'number',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
+    },
+    {
+      field: 'total',
+      headerName: 'Tiket Selesai',
+      type: 'number',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
     },
     {
       field: 'rateTarget',
@@ -105,9 +122,23 @@ export default function PerformaTable({ header, title, rows, getStartDate, getEn
 
   const [pageSize, setPageSize] = React.useState(10);
 
-  const d = new Date()
+  const d = new Date();
   const [value, setValue] = React.useState(d.setDate(1));
-  const [value1, setValue1] = React.useState(new Date());
+  const [value1, setValue1] = React.useState(new Date);
+
+  const handleChange = (newValue) => {
+    // const firstDay = new Date(newValue.getFullYear(), newValue.getMonth(), 1);
+    setValue(newValue);
+    // console.log(newValue);
+  };
+
+  const handleChange1 = (newValue1) => {
+    const lastDay = new Date(newValue1.getFullYear(), newValue1.getMonth() + 1, 0);
+    setValue1(lastDay);
+    // console.log(newValue1);
+  };
+
+  console.log(value1);
 
   return (
     <Card>
@@ -149,7 +180,7 @@ export default function PerformaTable({ header, title, rows, getStartDate, getEn
       </Stack>
 
       <Stack direction="row" justifyContent="space-around">
-        <Box sx={{ pt: 2, pb: 1 }}>
+        <Box sx={{ pt: 2, pb: 1, width: 180 }}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               views={['month']}
@@ -160,12 +191,12 @@ export default function PerformaTable({ header, title, rows, getStartDate, getEn
               minDate={new Date('2022-01-01')}
               maxDate={new Date('2022-08-01')}
               value={value}
-              onChange={getStartDate}
-              renderInput={(params) => <TextField size='small' {...params} helperText={null} />}
+              onChange={handleChange}
+              renderInput={(params) => <TextField size="small" {...params} helperText={null} />}
             />
           </LocalizationProvider>
         </Box>
-        <Box sx={{ pt: 2, pb: 1 }}>
+        <Box sx={{ pt: 2, pb: 1, width: 180 }}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               views={['month']}
@@ -173,19 +204,36 @@ export default function PerformaTable({ header, title, rows, getStartDate, getEn
               disableMaskedInput
               label="Month End"
               openTo="month"
-              minDate={new Date('2022-01-31')}
+              minDate={value}
               maxDate={new Date('2022-08-31')}
               value={value1}
-              onChange={getEndDate}
-              renderInput={(params) => <TextField size='small' {...params} helperText={null} />}
+              onChange={handleChange1}
+              renderInput={(params) => <TextField size="small" {...params} helperText={null} />}
             />
           </LocalizationProvider>
         </Box>
-        <Box sx={{ pt: 2, pb: 1 }}>
-          <Button variant="outlined" onClick={submit}>
+        {/* <Box sx={{ pt: 2, pb: 1 }}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              axios
+                .get(
+                  `http://localhost:3001/api/tiket/${bagian}/${moment(value).format('YYYY-MM-DD')}/${moment(
+                    value1
+                  ).format('YYYY-MM-DD')}`
+                )
+                .then((response) => {
+                  {setData}(response.data);
+                  // console.log(response.data);
+                })
+                .catch((e) => {
+                  // console.log(e);
+                });
+            }}
+          >
             Submit
           </Button>
-        </Box>
+        </Box> */}
       </Stack>
 
       <Box
