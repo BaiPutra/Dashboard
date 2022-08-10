@@ -71,7 +71,7 @@ export default function ATM() {
   const [searchPemasang, setSearchPemasang] = useState('');
 
   useEffect(() => {
-    performaPemasang();
+    performaImplementor();
     performaKanca()
   }, []);
 
@@ -80,8 +80,8 @@ export default function ATM() {
     setSearchPemasang(searchPemasang);
   };
 
-  const performaPemasang = () => {
-    TiketDataService.performaPemasang()
+  const performaImplementor = () => {
+    TiketDataService.performaImplementor()
       .then((response) => {
         setListPerformaPemasang(response.data);
         console.log(response.data);

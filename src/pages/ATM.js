@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment-timezone';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 // @mui
 import { Grid, Container, Typography, Card, Box, Stack, TextField, Button } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers';
@@ -10,7 +9,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DataGrid } from '@mui/x-data-grid';
 
 import { clsx } from 'clsx';
-import { CSVLink } from 'react-csv';
 import TiketDataService from '../helper/services';
 // components
 import Page from '../components/Page';
@@ -79,46 +77,44 @@ const columns = [
         return '';
       }
       return clsx('super-app', {
-        negative: params.value < 80,
-        positive: params.value > 80,
+        negative: params.value < 95,
+        positive: params.value > 95,
       });
     },
   },
 ];
 
 export default function ATM() {
-  const bagian = '1';
+  const bagian = `'ATM'`;
 
   const [tiket, setTiket] = useState([]);
   const [listTanggal, setListTanggal] = useState([]);
   const [listMinggu, setListMinggu] = useState([]);
   const [listKanca, setListKanca] = useState([]);
-  const [jenisTiket, setJenisTiket] = useState([]);
   const [Implementor, setImplementor] = useState([]);
-
-  console.log();
+  const [jenisTiket, setJenisTiket] = useState([]);
 
   useEffect(() => {
+    // getAll();
+    perTanggal(bagian);
     performaKanca(bagian);
-    getAll();
-    perTanggal();
-    perJenisMasalah();
+    performaImplementor(bagian);
+    perJenisMasalah(bagian);
     perMinggu();
-    performaPemasang();
   }, [bagian]);
 
-  const getAll = () => {
-    TiketDataService.getAll()
-      .then((response) => {
-        setTiket(response.data);
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-  const perTanggal = () => {
-    TiketDataService.perTanggal()
+  // const getAll = () => {
+  //   TiketDataService.getAll()
+  //     .then((response) => {
+  //       setTiket(response.data);
+  //       console.log(response.data);
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+  //     });
+  // };
+  const perTanggal = bagian => {
+    TiketDataService.perTanggal(bagian)
       .then((response) => {
         setListTanggal(response.data);
         // console.log(response.data);
@@ -137,8 +133,18 @@ export default function ATM() {
         console.log(e);
       });
   };
-  const perJenisMasalah = () => {
-    TiketDataService.perJenisMasalah()
+  const performaImplementor = bagian => {
+    TiketDataService.performaImplementor(bagian)
+      .then((response) => {
+        setImplementor(response.data);
+        // console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  const perJenisMasalah = bagian => {
+    TiketDataService.perJenisMasalah(bagian)
       .then((response) => {
         setJenisTiket(response.data);
         // console.log(response.data);
@@ -151,16 +157,6 @@ export default function ATM() {
     TiketDataService.perMinggu()
       .then((response) => {
         setListMinggu(response.data);
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-  const performaPemasang = () => {
-    TiketDataService.performaPemasang()
-      .then((response) => {
-        setImplementor(response.data);
         // console.log(response.data);
       })
       .catch((e) => {
@@ -169,17 +165,12 @@ export default function ATM() {
   };
 
   const minggu = listMinggu.map(({ sampai }) => sampai);
-  const total = listMinggu.map(({ total }) => total);
-  const totalIn = listMinggu.map(({ targetIn }) => targetIn);
+  const total = listMinggu.map(({ atm }) => atm);
+  const totalIn = listMinggu.map(({ targetInATM }) => targetInATM);
 
   const targetIn = tiket.filter((tiket) => tiket.targetIn === 1);
-  console.log(targetIn);
-
   const targetOut = tiket.filter((tiket) => tiket.targetIn === 0);
-  console.log(targetOut);
-
   const rate = (targetIn.length / tiket.length) * 100;
-  console.log(rate);
 
   const [value, setValue] = React.useState(new Date());
   const [value1, setValue1] = React.useState(new Date());
@@ -230,16 +221,16 @@ export default function ATM() {
               onClick={() => {
                 axios
                   .get(
-                    `http://localhost:3001/api/tiket/'ATM'/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
+                    `http://localhost:3001/api/tiket/${bagian}/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
                       'YYYY-MM-DD'
                     )}`
                   )
                   .then((response) => {
                     setTiket(response.data);
-                    console.log(response.data);
+                    // console.log(response.data);
                   })
                   .catch((e) => {
-                    console.log(e);
+                    // console.log(e);
                   });
               }}
             >
@@ -297,11 +288,6 @@ export default function ATM() {
                 <Typography variant="h6" sx={{ pl: 3, pt: 3, pb: 1 }}>
                   Ticket Handle Last Week
                 </Typography>
-                {/* <Box sx={{ pr: 5, pt: 3, pb: 1 }}>
-                  <CSVLink data={jenisTiket} filename={'file.csv'}>
-                    Download CSV
-                  </CSVLink>
-                </Box> */}
               </Stack>
               <Box
                 sx={{
@@ -319,22 +305,19 @@ export default function ATM() {
                   },
                   '& .super-app.positive': {
                     backgroundColor: 'rgba(157, 255, 118, 0.49)',
-                    // color: '#1a3e72',
                     fontWeight: '600',
                   },
                   '& .super-app.in': {
-                    // backgroundColor: 'rgba(157, 255, 118, 0.49)',
                     color: '#2e7d32',
                     fontWeight: '800',
                   },
                   '& .super-app.out': {
-                    // backgroundColor: 'rgba(157, 255, 118, 0.49)',
                     color: '#d32f2f',
                     fontWeight: '800',
                   },
                 }}
               >
-                <DataGrid hideFooter="true" rows={listTanggal} columns={columns} density='compact' sx={{ p:1 }} />
+                <DataGrid hideFooter rows={listTanggal} columns={columns} density='compact' sx={{ p:1 }} />
               </Box>
             </Card>
           </Grid>
@@ -366,6 +349,33 @@ export default function ATM() {
               header='Kantor Cabang'
               title='Performa Kantor Cabang'
               rows={listKanca}
+              getStartDate={(newValue) => {
+                const firstDay = new Date(newValue.getFullYear(), newValue.getMonth(), 1);
+                setValue(firstDay);
+                // return firstDay
+                console.log(firstDay);
+              }}
+              getEndDate={(newValue1) => {
+                const lastDay = new Date(newValue1.getFullYear(), newValue1.getMonth() + 1, 0);
+                setValue1(lastDay);
+                // return lastDay
+                console.log(lastDay);
+              }}
+              submit={() => {
+                axios
+                  .get(
+                    `http://localhost:3001/api/tiket/${bagian}/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
+                      'YYYY-MM-DD'
+                    )}`
+                  )
+                  .then((response) => {
+                    setTiket(response.data);
+                    // console.log(response.data);
+                  })
+                  .catch((e) => {
+                    // console.log(e);
+                  });
+              }}
             />
           </Grid>
 

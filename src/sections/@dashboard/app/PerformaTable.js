@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 // @mui
-import { Typography, Card, Box, Modal, Stack, Button } from '@mui/material';
+import { Typography, Card, Box, Modal, Stack, Button, TextField } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { clsx } from 'clsx';
 
 const style = {
@@ -41,7 +44,7 @@ PerformaTable.propTypes = {
   rows: PropTypes.array,
 }
 
-export default function PerformaTable({ header, title, rows }) {
+export default function PerformaTable({ header, title, rows, getStartDate, getEndDate, submit }) {
   const columns = [
     { field: 'id', headerName: 'No', flex: 0.5 },
     { field: 'nama', headerName: header, flex: 2 },
@@ -61,8 +64,8 @@ export default function PerformaTable({ header, title, rows }) {
           return '';
         }
         return clsx('super-app', {
-          negative: params.value < 80,
-          positive: params.value > 80,
+          negative: params.value < 95,
+          positive: params.value > 95,
         });
       },
     },
@@ -102,13 +105,17 @@ export default function PerformaTable({ header, title, rows }) {
 
   const [pageSize, setPageSize] = React.useState(10);
 
+  const d = new Date()
+  const [value, setValue] = React.useState(d.setDate(1));
+  const [value1, setValue1] = React.useState(new Date());
+
   return (
     <Card>
       <Stack direction="row" justifyContent="space-between">
-        <Typography variant="h6" sx={{ pl: 3, pt: 3, pb: 1 }}>
+        <Typography variant="h6" sx={{ pl: 3, pt: 3 }}>
           {title}
         </Typography>
-        <Box sx={{ pr: 5, pt: 3, pb: 1 }}>
+        <Box sx={{ pr: 5, pt: 3 }}>
           <Button variant="text" onClick={handleOpen}>
             Lihat Semua
           </Button>
@@ -140,6 +147,47 @@ export default function PerformaTable({ header, title, rows }) {
           </Box>
         </Modal>
       </Stack>
+
+      <Stack direction="row" justifyContent="space-around">
+        <Box sx={{ pt: 2, pb: 1 }}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              views={['month']}
+              inputFormat="MMMM"
+              disableMaskedInput
+              label="Month Start"
+              openTo="month"
+              minDate={new Date('2022-01-01')}
+              maxDate={new Date('2022-08-01')}
+              value={value}
+              onChange={getStartDate}
+              renderInput={(params) => <TextField size='small' {...params} helperText={null} />}
+            />
+          </LocalizationProvider>
+        </Box>
+        <Box sx={{ pt: 2, pb: 1 }}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              views={['month']}
+              inputFormat="MMMM"
+              disableMaskedInput
+              label="Month End"
+              openTo="month"
+              minDate={new Date('2022-01-31')}
+              maxDate={new Date('2022-08-31')}
+              value={value1}
+              onChange={getEndDate}
+              renderInput={(params) => <TextField size='small' {...params} helperText={null} />}
+            />
+          </LocalizationProvider>
+        </Box>
+        <Box sx={{ pt: 2, pb: 1 }}>
+          <Button variant="outlined" onClick={submit}>
+            Submit
+          </Button>
+        </Box>
+      </Stack>
+
       <Box
         sx={{
           height: 416,
@@ -161,7 +209,7 @@ export default function PerformaTable({ header, title, rows }) {
           },
         }}
       >
-        <DataGrid hideFooter="true" rows={rows} columns={columns} pageSize={6} />
+        <DataGrid hideFooter rows={rows} columns={columns} pageSize={6} />
       </Box>
     </Card>
   );

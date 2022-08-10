@@ -1,54 +1,43 @@
 import moment from 'moment-timezone';
 import http from './http-common';
 
-const getAll = (bagian) => {
-  return http.get(`/${bagian}/${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}/${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}`);
-};
+const getAll = bagian =>
+  http.get(`/${bagian}/${moment().format('YYYY')}-${moment().format('MM')}-01/${moment().format('YYYY')}-${moment().format('MM')}-31`);
 
-const closedTicketLastWeek = () => {
-  return http.get(`/tiket/closedTicketLastWeek/`);
-};
+const closedTicketLastWeek = () =>
+  http.get(`/tiket/closedTicketLastWeek/`);
 
-const performaKanca = bagian => {
-  return http.get(`/tiket/performaKanca/${bagian}`);
-}
+const performaKanca = bagian =>
+  http.get(`/tiket/performaKanca/${bagian}`);
 
-const performaPemasang = () => {
-  return http.get('/tiket/performaPemasang');
-};
+const performaImplementor = bagian =>
+  http.get(`/tiket/performaImplementor/${bagian}`);
 
-const perJenisMasalah = () => {
-  return http.get('/tiket/perJenisMasalah');
-};
+const perTanggal = bagian =>
+  http.get(`/tiket/perTanggal/${bagian}`);
 
-const perTanggal = () => {
-  return http.get('/tiket/perTanggal');
-};
+const perJenisMasalah = bagian =>
+  http.get(`/tiket/perJenisMasalah/${bagian}`);
 
-const perMinggu = () => {
-  return http.get('/tiket/perMinggu');
-};
+const perMinggu = () =>
+  http.get('/tiket/perMinggu');
 
-const perBagian = () => {
-  return http.get('/tiket/perBagian');
-}
+const perBagian = () =>
+  http.get('/tiket/perBagian');
 
-const findByTicketID = (ticketID) => {
-  return http.get(`/tiket?ticketID=${ticketID}`);
-};
+const findByTicketID = (ticketID) =>
+  http.get(`/tiket?ticketID=${ticketID}`);
 
-const findByPemasang = (pemasang) => {
-  return http.get(`/tiket/performaPemasang?pemasang=${pemasang}`);
-};
+const findByPemasang = (pemasang) =>
+  http.get(`/tiket/performaPemasang?pemasang=${pemasang}`);
 
-const jenisTiket = () => {
-  return http.get('/tiket/jenisTiket')
-}
+const jenisTiket = () =>
+  http.get('/tiket/jenisTiket')
 
 const TiketDataService = {
   getAll,
   closedTicketLastWeek,
-  performaPemasang,
+  performaImplementor,
   perJenisMasalah,
   perTanggal,
   findByTicketID,

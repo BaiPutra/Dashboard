@@ -10,10 +10,10 @@ import { BaseOptionChart } from '../../../components/chart';
 
 const CHART_SIZE = { width: '100%', height: 115 };
 
-Percentage.propTypes = {
-  title: PropTypes.string.isRequired,
-  value: PropTypes.number,
-};
+// Percentage.propTypes = {
+//   title: PropTypes.string.isRequired,
+//   value: PropTypes.isRequired,
+// };
 
 export default function Percentage({ title, value }) {
   const theme = useTheme();

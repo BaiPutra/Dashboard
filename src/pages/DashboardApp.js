@@ -3,12 +3,11 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography, Card, Box, TextField, Button } from '@mui/material';
+import { Grid, Container, Typography, TextField, Button } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DataGrid } from '@mui/x-data-grid';
 import { clsx } from 'clsx';
 // data
 import TiketDataService from '../helper/services';
@@ -18,10 +17,7 @@ import Page from '../components/Page';
 import {
   AppCurrentVisits,
   AppWebsiteVisits,
-  AppTrafficBySite,
   AppWidgetSummary,
-  AppCurrentSubject,
-  AppConversionRates,
   PerformaRate,
 } from '../sections/@dashboard/app';
 
@@ -144,15 +140,11 @@ export default function DashboardApp() {
 
   const handleChange = (newValue) => {
     setValue(newValue);
-    // console.log('haha', newValue);
   };
 
   const handleChange1 = (newValue) => {
     setValue1(newValue);
-    // console.log('haha', newValue);
   };
-
-  console.log(value);
 
   const targetIn = tiket.filter((tiket) => tiket.targetIn === 1);
   console.log(targetIn);
@@ -169,21 +161,6 @@ export default function DashboardApp() {
         {/* <Typography sx={{ mb: 4 }}>Tiket Departemen ITE (ATM, CRM, dan EDC)</Typography> */}
 
         <Grid container spacing={2}>
-          {/* <Grid item xs={2}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                views={['month', 'year']}
-                label="Year and Month"
-                minDate={new Date('2022-01-01')}
-                maxDate={new Date('2022-12-01')}
-                value={value}
-                onChange={(newValue) => {
-                  setValue(newValue);
-                }}
-                renderInput={(params) => <TextField {...params} helperText={null} />}
-              />
-            </LocalizationProvider>
-          </Grid> */}
           <Grid item xs={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
