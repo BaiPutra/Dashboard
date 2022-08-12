@@ -3,12 +3,10 @@ import moment from 'moment-timezone';
 import axios from 'axios';
 // @mui
 import { Grid, Container, Typography, Card, Box, Stack, TextField, Button } from '@mui/material';
-import { DesktopDatePicker } from '@mui/x-date-pickers';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DataGrid } from '@mui/x-data-grid';
-
-import { value, value1 } from '../sections/@dashboard/app/PerformaTable';
 
 import { clsx } from 'clsx';
 import TiketDataService from '../helper/services';
@@ -22,8 +20,6 @@ import {
   Percentage,
   PerformaTable,
 } from '../sections/@dashboard/app';
-
-console.log(value);
 
 const columns = [
   { field: 'id', headerName: 'No', flex: 0.4 },
@@ -99,7 +95,7 @@ export default function ATM() {
   const [jenisTiket, setJenisTiket] = useState([]);
 
   useEffect(() => {
-    // getAll();
+    getAll(bagian);
     perTanggal(bagian);
     performaKanca(bagian);
     performaImplementor(bagian);
@@ -107,16 +103,16 @@ export default function ATM() {
     perMinggu();
   }, [bagian]);
 
-  // const getAll = () => {
-  //   TiketDataService.getAll()
-  //     .then((response) => {
-  //       setTiket(response.data);
-  //       console.log(response.data);
-  //     })
-  //     .catch((e) => {
-  //       console.log(e);
-  //     });
-  // };
+  const getAll = bagian => {
+    TiketDataService.getAll(bagian)
+      .then((response) => {
+        setTiket(response.data);
+        // console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
   const perTanggal = bagian => {
     TiketDataService.perTanggal(bagian)
       .then((response) => {
@@ -176,7 +172,9 @@ export default function ATM() {
   const targetOut = tiket.filter((tiket) => tiket.targetIn === 0);
   const rate = (targetIn.length / tiket.length) * 100;
 
-  const [value, setValue] = React.useState(new Date());
+  const d = new Date();
+
+  const [value, setValue] = React.useState(d.setDate(1));
   const [value1, setValue1] = React.useState(new Date());
 
   const handleChange = (newValue) => {
@@ -185,6 +183,68 @@ export default function ATM() {
   const handleChange1 = (newValue) => {
     setValue1(newValue);
   };
+
+  const [startMonth, setStartMonth] = React.useState(d.setDate(1));
+  const [endMonth, setEndMonth] = React.useState(new Date());
+
+  const [startMonth1, setStartMonth1] = React.useState(d.setDate(1));
+  const [endMonth1, setEndMonth1] = React.useState(new Date());
+
+  const handleChange2 = (newValue) => {
+    setStartMonth(newValue);
+    // console.log(startMonth);
+  };
+
+  const handleChange3 = (newValue1) => {
+    const lastDay = new Date(newValue1.getFullYear(), newValue1.getMonth() + 1, 0);
+    setEndMonth(lastDay);
+    // console.log(endMonth);
+  };
+
+  const handleChange4 = (newValue) => {
+    setStartMonth1(newValue);
+    // console.log(startMonth);
+  };
+
+  const handleChange5 = (newValue1) => {
+    const lastDay = new Date(newValue1.getFullYear(), newValue1.getMonth() + 1, 0);
+    setEndMonth1(lastDay);
+    // console.log(endMonth);
+  };
+
+  const handleSubmit = () => {
+    axios
+      .get(
+        `http://localhost:3001/api/tiket/performaKanca/${bagian}/${moment(startMonth).format('YYYY-MM-DD')}/${moment(
+          endMonth
+        ).format('YYYY-MM-DD')}`
+      )
+      .then((response) => {
+        setListKanca(response.data);
+        // console.log(response.data);
+      })
+      .catch((e) => {
+        // console.log(e);
+      });
+      console.log(startMonth, endMonth);
+  }
+
+  const handleSubmit1 = () => {
+    axios
+      .get(
+        `http://localhost:3001/api/tiket/performaKanca/${bagian}/${moment(startMonth).format('YYYY-MM-DD')}/${moment(
+          endMonth
+        ).format('YYYY-MM-DD')}`
+      )
+      .then((response) => {
+        setImplementor(response.data);
+        // console.log(response.data);
+      })
+      .catch((e) => {
+        // console.log(e);
+      });
+      console.log(startMonth, endMonth);
+  }
 
   const newJenisTiket = jenisTiket.slice(0, 5);
 
@@ -198,9 +258,10 @@ export default function ATM() {
         <Grid container spacing={2}>
           <Grid item xs={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DesktopDatePicker
+              <DatePicker
                 label="Start Date"
                 value={value}
+                maxDate={value1}
                 onChange={handleChange}
                 renderInput={(params) => <TextField size='small' {...params} />}
               />
@@ -209,9 +270,11 @@ export default function ATM() {
 
           <Grid item xs={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DesktopDatePicker
+              <DatePicker
                 label="End Date"
                 value={value1}
+                minDate={value}
+                maxDate={new Date()}
                 onChange={handleChange1}
                 renderInput={(params) => <TextField size='small' {...params} />}
               />
@@ -241,7 +304,7 @@ export default function ATM() {
               Submit
             </Button>
           </Grid>
-          
+
           <Grid item xs={6}>
             <Grid container justifyContent="flex-end" alignItems="stretch">
               <Button variant="contained" sx={{ width: '30%', height: 40 }}>
@@ -321,7 +384,7 @@ export default function ATM() {
                   },
                 }}
               >
-                <DataGrid hideFooter rows={listTanggal} columns={columns} density='compact' sx={{ p:1 }} />
+                <DataGrid hideFooter rows={listTanggal} columns={columns} density='compact' sx={{ p: 1 }} />
               </Box>
             </Card>
           </Grid>
@@ -353,13 +416,17 @@ export default function ATM() {
               header='Kantor Cabang'
               title='Performa Kantor Cabang'
               rows={listKanca}
-              bagian={bagian}
+              value={startMonth}
+              value1={endMonth}
+              handleChange={handleChange2}
+              handleChange1={handleChange3}
+              submit={handleSubmit}
             />
           </Grid>
 
           <Grid item xs={12} md={6} lg={6}>
             <AppConversionRates
-              title="Top 5 Jenis Masalah"
+              title="Top 5 Jenis Masalah Bulan Ini"
               subheader="ATM Section"
               chartData={newJenisTiket.map((item) => {
                 const newItem = { label: item.nama, value: item.tiketClose };
@@ -371,10 +438,15 @@ export default function ATM() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={6}>
-            <PerformaTable 
+            <PerformaTable
               header='Implementor'
               title='Performa Implementor'
               rows={Implementor}
+              value={startMonth1}
+              value1={endMonth1}
+              handleChange={handleChange4}
+              handleChange1={handleChange5}
+              submit={handleSubmit1}
             />
           </Grid>
         </Grid>

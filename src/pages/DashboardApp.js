@@ -48,22 +48,20 @@ const columns = [
 export default function DashboardApp() {
   const theme = useTheme();
   const [tiket, setTiket] = useState([]);
-  const [tiketSelesai, setTiketSelesai] = useState([]);
-  const [listTanggal, setListTanggal] = useState([]);
   const [listMinggu, setListMinggu] = useState([]);
   const [listKanca, setListKanca] = useState([]);
   const [bagian, setBagian] = useState([]);
+
   useEffect(() => {
-    closedTicketLastWeek();
-    perTanggal();
     perMinggu();
     performaKanca();
     perBagian();
     getTiket();
   }, []);
+  
   const getTiket = () => {
     axios.get(
-      `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/2022-${moment().format('MM')}-${moment().format('DD')}/2022-${moment().format('MM')}-${moment().format('DD')}`
+      `http://localhost:3001/api/tiket/'ATM','CRM','EDC'/2022-${moment().format('MM')}-01/2022-${moment().format('MM')}-${moment().format('DD')}`
     )
       .then((response) => {
         setTiket(response.data);
@@ -73,26 +71,6 @@ export default function DashboardApp() {
         console.log(e);
       })
   }
-  const closedTicketLastWeek = () => {
-    TiketDataService.closedTicketLastWeek()
-      .then((response) => {
-        setTiketSelesai(response.data);
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-  const perTanggal = () => {
-    TiketDataService.perTanggal()
-      .then((response) => {
-        setListTanggal(response.data);
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
   const perMinggu = () => {
     TiketDataService.perMinggu()
       .then((response) => {
@@ -133,23 +111,18 @@ export default function DashboardApp() {
   const total = listKanca.map(({ total }) => total);
   const totalIn = listKanca.map(({ targetIn }) => targetIn);
 
-  const [value, setValue] = React.useState(new Date());
-
+  const [value, setValue] = React.useState(new Date().setDate(1));
   const [value1, setValue1] = React.useState(new Date());
 
   const handleChange = (newValue) => {
     setValue(newValue);
   };
-
   const handleChange1 = (newValue) => {
     setValue1(newValue);
   };
 
   const targetIn = tiket.filter((tiket) => tiket.targetIn === 1);
-  console.log(targetIn);
-
   const targetOut = tiket.filter((tiket) => tiket.targetIn === 0);
-  console.log(targetOut);
 
   return (
     <Page title="Dashboard">
@@ -165,6 +138,7 @@ export default function DashboardApp() {
               <DesktopDatePicker
                 label="Start Date"
                 value={value}
+                maxDate={value1}
                 onChange={handleChange}
                 renderInput={(params) => <TextField size='small' {...params} />}
               />
@@ -175,6 +149,8 @@ export default function DashboardApp() {
               <DesktopDatePicker
                 label="End Date"
                 value={value1}
+                minDate={value}
+                maxDate={new Date()}
                 onChange={handleChange1}
                 renderInput={(params) => <TextField size='small' {...params} />}
               />

@@ -46,7 +46,7 @@ PerformaTable.propTypes = {
   rows: PropTypes.array,
 };
 
-export default function PerformaTable({ header, title, rows, bagian }) {
+export default function PerformaTable({ header, title, rows, value, value1, handleChange, handleChange1, submit }) {
   const columns = [
     { field: 'id', headerName: 'No', flex: 0.5 },
     { field: 'nama', headerName: header, flex: 2 },
@@ -80,18 +80,18 @@ export default function PerformaTable({ header, title, rows, bagian }) {
   const details = [
     { field: 'id', headerName: 'No', flex: 0.5 },
     { field: 'nama', headerName: header, flex: 2 },
-    { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1 },
     {
-      field: 'targetOut',
-      headerName: 'Keluar Target',
+      field: 'total',
+      headerName: 'Tiket Selesai',
       type: 'number',
       headerAlign: 'center',
       align: 'center',
       flex: 1,
     },
+    { field: 'targetIn', headerName: 'Sesuai Target', type: 'number', headerAlign: 'center', align: 'center', flex: 1 },
     {
-      field: 'total',
-      headerName: 'Tiket Selesai',
+      field: 'targetOut',
+      headerName: 'Keluar Target',
       type: 'number',
       headerAlign: 'center',
       align: 'center',
@@ -109,8 +109,8 @@ export default function PerformaTable({ header, title, rows, bagian }) {
           return '';
         }
         return clsx('super-app', {
-          negative: params.value < 80,
-          positive: params.value > 80,
+          negative: params.value < 95,
+          positive: params.value > 95,
         });
       },
     },
@@ -122,23 +122,18 @@ export default function PerformaTable({ header, title, rows, bagian }) {
 
   const [pageSize, setPageSize] = React.useState(10);
 
-  const d = new Date();
-  const [value, setValue] = React.useState(d.setDate(1));
-  const [value1, setValue1] = React.useState(new Date);
+  // const d = new Date();
+  // const [value, setValue] = React.useState(d.setDate(1));
+  // const [value1, setValue1] = React.useState(new Date);
 
-  const handleChange = (newValue) => {
-    // const firstDay = new Date(newValue.getFullYear(), newValue.getMonth(), 1);
-    setValue(newValue);
-    // console.log(newValue);
-  };
+  // const handleChange = (newValue) => {
+  //   setValue(newValue);
+  // };
 
-  const handleChange1 = (newValue1) => {
-    const lastDay = new Date(newValue1.getFullYear(), newValue1.getMonth() + 1, 0);
-    setValue1(lastDay);
-    // console.log(newValue1);
-  };
-
-  console.log(value1);
+  // const handleChange1 = (newValue1) => {
+  //   const lastDay = new Date(newValue1.getFullYear(), newValue1.getMonth() + 1, 0);
+  //   setValue1(lastDay);
+  // };
 
   return (
     <Card>
@@ -188,9 +183,9 @@ export default function PerformaTable({ header, title, rows, bagian }) {
               disableMaskedInput
               label="Month Start"
               openTo="month"
-              minDate={new Date('2022-01-01')}
-              maxDate={new Date('2022-08-01')}
               value={value}
+              minDate={new Date('2022-01-01')}
+              maxDate={value1}
               onChange={handleChange}
               renderInput={(params) => <TextField size="small" {...params} helperText={null} />}
             />
@@ -212,33 +207,19 @@ export default function PerformaTable({ header, title, rows, bagian }) {
             />
           </LocalizationProvider>
         </Box>
-        {/* <Box sx={{ pt: 2, pb: 1 }}>
+        <Box sx={{ pt: 2, pb: 1 }}>
           <Button
             variant="outlined"
-            onClick={() => {
-              axios
-                .get(
-                  `http://localhost:3001/api/tiket/${bagian}/${moment(value).format('YYYY-MM-DD')}/${moment(
-                    value1
-                  ).format('YYYY-MM-DD')}`
-                )
-                .then((response) => {
-                  {setData}(response.data);
-                  // console.log(response.data);
-                })
-                .catch((e) => {
-                  // console.log(e);
-                });
-            }}
+            onClick={submit}
           >
             Submit
           </Button>
-        </Box> */}
+        </Box>
       </Stack>
 
       <Box
         sx={{
-          height: 416,
+          height: 365,
           padding: 2,
           '& .super-app-theme--cell': {
             backgroundColor: 'rgba(224, 183, 60, 0.55)',
@@ -257,7 +238,7 @@ export default function PerformaTable({ header, title, rows, bagian }) {
           },
         }}
       >
-        <DataGrid hideFooter rows={rows} columns={columns} pageSize={6} />
+        <DataGrid hideFooter rows={rows} columns={columns} pageSize={5} />
       </Box>
     </Card>
   );

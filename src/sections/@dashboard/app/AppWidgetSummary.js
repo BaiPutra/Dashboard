@@ -10,10 +10,11 @@ import Iconify from '../../../components/Iconify';
 const columns = [
   { field: 'id', headerName: '#', flex: 0.5 },
   { field: 'tid', headerName: 'TID', flex: 0.5 },
+  { field: 'jenisMasalah', headerName: 'Jenis Masalah', flex: 1 },
   { field: 'lokasi', headerName: 'Lokasi', flex: 1 },
   { field: 'kanca', headerName: 'Kantor Cabang', flex: 1 },
-  { field: 'entryTiket', headerName: 'Tiket Masuk', flex: 1 },
-  { field: 'updateTiket', headerName: 'Tiket Selesai', flex: 1 },
+  { field: 'entryTiket', headerName: 'Tiket Masuk', flex: 0.5 },
+  { field: 'updateTiket', headerName: 'Tiket Selesai', flex: 0.5 },
 ];
 
 const style = {
