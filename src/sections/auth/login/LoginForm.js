@@ -1,17 +1,16 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
-import { Link, Stack, IconButton, InputAdornment } from '@mui/material';
+import { Link, Stack, IconButton, InputAdornment, Button } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hook-form';
-
-// ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -34,17 +33,74 @@ export default function LoginForm() {
     defaultValues,
   });
 
-  const {
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
+  // const {
+  //   handleSubmit,
+  //   formState: { isSubmitting },
+  // } = methods;
 
-  const onSubmit = async () => {
-    navigate('/dashboard', { replace: true });
+  const handleSubmit = () => {
+    fetch('http://localhost:3001/api/tiket/perMinggu', {
+      headers: {},
+      method: 'GET'
+    }).then(res => console.log(res))
+    console.log('TESTETESSS');
+
+    // navigate('/dashboard', { replace: true });
+    // console.log('eewewwwdwdwd', e.target.email.value);
+    // const data = new FormData();
+    // data.append("username", 'baiputra');
+    // data.append("password", "password");
+    // console.log(data);
+
+    // const data = JSON.stringify({
+    //   username: 'baiputra',
+    //   password: 'password',
+    // });
+    // const config = {
+    //   method: 'post',
+    //   url: 'http://localhost:3001/api/tiket/login',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   data,
+    // };
+    // console.log(config);
+    // try {
+    //   axios(config)
+    //     .then((response) => {
+    //       console.log('Hehehee', JSON.stringify(response.data));
+    //     })
+    //     .catch(console.error);
+    // } catch {
+    //   console.log('daffff');
+    // }
+
+    // axios({
+    //   method: 'post',
+    //   url: 'http://localhost:3001/api/tiket/login',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   data: JSON.stringify({
+    //     "username": "baiputra",
+    //     "password": "password"
+    //   })
+    // }).then(data => console.log(data))
+    // axios
+    //   .post('http://localhost:3001/api/tiket/login', data)
+    //   .then((response) => {
+    //     console.log('Status: ', response.status);
+    //     console.log('Data: ', response.data);
+    //     // localStorage.setItem('USER_BRI', res.data)
+    //     // navigate('/dashboard');
+    //   })
+    //   .catch(error => {
+    //     console.log('error', error);
+    //   });
   };
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={handleSubmit}>
       <Stack spacing={3}>
         <RHFTextField name="email" label="Email address" />
 
@@ -71,9 +127,9 @@ export default function LoginForm() {
         </Link>
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+      <Button fullWidth size="large" type="submit" variant="contained">
         Login
-      </LoadingButton>
+      </Button>
     </FormProvider>
   );
 }

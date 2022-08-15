@@ -96,6 +96,7 @@ export default function EDC() {
   const [listKanca, setListKanca] = useState([]);
   const [Implementor, setImplementor] = useState([]);
   const [jenisTiket, setJenisTiket] = useState([]);
+  const [listPeruntukan, setPeruntukan] = useState([]);
 
   useEffect(() => {
     getAll(bagian);
@@ -104,6 +105,7 @@ export default function EDC() {
     performaImplementor(bagian);
     perJenisMasalah(bagian);
     perMinggu();
+    peruntukan();
   }, [bagian]);
 
   const getAll = bagian => {
@@ -160,6 +162,16 @@ export default function EDC() {
     TiketDataService.perMinggu()
       .then((response) => {
         setListMinggu(response.data);
+        // console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  const peruntukan = () => {
+    TiketDataService.peruntukan()
+      .then((response) => {
+        setPeruntukan(response.data);
         // console.log(response.data);
       })
       .catch((e) => {
@@ -235,8 +247,8 @@ export default function EDC() {
   const handleSubmit1 = () => {
     axios
       .get(
-        `http://localhost:3001/api/tiket/performaKanca/${bagian}/${moment(startMonth).format('YYYY-MM-DD')}/${moment(
-          endMonth
+        `http://localhost:3001/api/tiket/performaImplementor/${bagian}/${moment(startMonth1).format('YYYY-MM-DD')}/${moment(
+          endMonth1
         ).format('YYYY-MM-DD')}`
       )
       .then((response) => {
@@ -246,10 +258,19 @@ export default function EDC() {
       .catch((e) => {
         // console.log(e);
       });
-      console.log(startMonth, endMonth);
+      console.log(startMonth1, endMonth1);
   }
 
   const newJenisTiket = jenisTiket.slice(0, 5);
+
+  const uniqueValues = new Set(tiket.map(item => item.peruntukan));
+  // console.log(uniqueValues);
+
+  const count = {};
+  tiket.forEach(item => {
+    count[item.peruntukan] = (count[item.peruntukan] || 0) + 1;
+  });
+  // const peruntukan = [count.MERCHANT, count.BRILINKS, count.UKER]
 
   return (
     <Page title="EDC">
@@ -361,7 +382,7 @@ export default function EDC() {
               </Stack>
               <Box
                 sx={{
-                  height: 330,
+                  height: 405,
                   padding: 1,
                   '& .super-app-theme--cell': {
                     backgroundColor: 'rgba(224, 183, 60, 0.55)',
@@ -387,7 +408,7 @@ export default function EDC() {
                   },
                 }}
               >
-                <DataGrid hideFooter rows={listTanggal} columns={columns} density='compact' sx={{ p: 1 }} />
+                <DataGrid hideFooter rows={listTanggal} columns={columns} sx={{ p: 1 }} />
               </Box>
             </Card>
           </Grid>
@@ -395,7 +416,10 @@ export default function EDC() {
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
               title="Current Visits"
-              chartData={[]}
+              chartData={listPeruntukan.map((item) => {
+                const newItem = { label: item.peruntukan, value: item.total };
+                return newItem;
+              })}
               chartColors={[
                 theme.palette.primary.main,
                 theme.palette.chart.blue[0],
