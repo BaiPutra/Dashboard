@@ -12,3 +12,4 @@ export { default as TableCard } from './TableCard';
 export { default as Percentage } from './Percentage';
 export { default as PerformaRate } from './PerformaRate';
 export { default as PerformaTable } from './PerformaTable';
+export { default as TiketTerlambat } from './TiketTerlambat';

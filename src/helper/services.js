@@ -37,13 +37,9 @@ const perMinggu = () => http.get('/tiket/perMinggu');
 
 const perBagian = () => http.get('/tiket/perBagian');
 
-const findByTicketID = (ticketID) => http.get(`/tiket?ticketID=${ticketID}`);
-
-const findByPemasang = (pemasang) => http.get(`/tiket/performaPemasang?pemasang=${pemasang}`);
-
 const jenisTiket = () => http.get('/tiket/jenisTiket');
 
-const peruntukan = () => http.get('/tiket/peruntukan');
+const terlambat = (bagian) => http.get(`/tiket/terlambat/${bagian}`);
 
 const login = () => http.post('/tiket/login')
 
@@ -53,13 +49,11 @@ const TiketDataService = {
   performaImplementor,
   perJenisMasalah,
   perTanggal,
-  findByTicketID,
-  findByPemasang,
   perMinggu,
   performaKanca,
   perBagian,
   jenisTiket,
-  peruntukan,
+  terlambat,
   login,
 };
 

@@ -13,18 +13,17 @@ const columns = [
   { field: 'jenisMasalah', headerName: 'Jenis Masalah', flex: 1 },
   { field: 'lokasi', headerName: 'Lokasi', flex: 1 },
   { field: 'kanca', headerName: 'Kantor Cabang', flex: 1 },
-  { field: 'entryTiket', headerName: 'Tiket Masuk', flex: 0.5 },
-  { field: 'updateTiket', headerName: 'Tiket Selesai', flex: 0.5 },
+  { field: 'entryTiket', headerName: 'Tiket Masuk', flex: 0.7 },
+  { field: 'updateTiket', headerName: 'Tiket Selesai', flex: 0.7 },
 ];
 
 const style = {
-  height: 580,
-  padding: 1,
+  height: 600,
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '70%',
+  width: '75%',
   bgcolor: 'background.paper',
   borderRadius: 2,
   border: '1px solid #000',
@@ -60,6 +59,7 @@ export default function AppWidgetSummary({ title, total, icon, color = 'primary'
   return (
     <Card
       sx={{
+        height: 188,
         py: 2,
         boxShadow: 0,
         textAlign: 'center',
@@ -86,7 +86,6 @@ export default function AppWidgetSummary({ title, total, icon, color = 'primary'
         {title}
       </Typography>
 
-
       <Button onClick={handleOpen} sx={{ color: (theme) => theme.palette[color].dark }}>
         <Typography variant="h3">
           {total} {percent}
@@ -100,22 +99,31 @@ export default function AppWidgetSummary({ title, total, icon, color = 'primary'
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            disableColumnSelector
-            disableDensitySelector
-            components={{ Toolbar: GridToolbar }}
-            componentsProps={{
-              toolbar: {
-                showQuickFilter: true,
-                quickFilterProps: { debounceMs: 1000 },
-              },
-            }}
-          />
+          <Typography variant="h6" sx={{ pb: 1 }}>
+            Daftar {title}
+          </Typography>
+          <Box sx={{ height: 510 }}>
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              disableColumnSelector
+              disableDensitySelector
+              components={{ Toolbar: GridToolbar }}
+              componentsProps={{
+                toolbar: {
+                  showQuickFilter: true,
+                  quickFilterProps: { debounceMs: 1000 },
+                  csvOptions: {
+                    fileName: `Daftar ${title}`,
+                    delimiter: ';',
+                    utf8WithBom: true,
+                  },
+                },
+              }}
+            />
+          </Box>
         </Box>
       </Modal>
-
     </Card>
   );
 }

@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import moment from 'moment-timezone';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 // @mui
 import { Typography, Card, Box, Modal, Stack, Button, TextField } from '@mui/material';
@@ -11,7 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { clsx } from 'clsx';
 
 const style = {
-  height: 580,
+  height: 600,
   padding: 1,
   position: 'absolute',
   top: '50%',
@@ -153,23 +151,31 @@ export default function PerformaTable({ header, title, rows, value, value1, hand
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
-            <DataGrid
-              rows={rows}
-              columns={details}
-              pageSize={pageSize}
-              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-              rowsPerPageOptions={[10, 15, 20]}
-              pagination
-              disableColumnSelector
-              disableDensitySelector
-              components={{ Toolbar: GridToolbar }}
-              componentsProps={{
-                toolbar: {
-                  showQuickFilter: true,
-                  quickFilterProps: { debounceMs: 1000 },
-                },
-              }}
-            />
+            <Typography variant="h6" sx={{ pb: 1 }}>
+              {title}
+            </Typography>
+            <Box sx={{ height: 510 }}>
+              <DataGrid
+                rows={rows}
+                columns={details}
+                pageSize={pageSize}
+                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                rowsPerPageOptions={[10, 15, 20]}
+                pagination
+                disableColumnSelector
+                disableDensitySelector
+                components={{ Toolbar: GridToolbar }}
+                componentsProps={{
+                  toolbar: {
+                    showQuickFilter: true,
+                    quickFilterProps: { debounceMs: 1000 },
+                    csvOptions: {
+                      fileName: `${title}`,
+                    },
+                  },
+                }}
+              />
+            </Box>
           </Box>
         </Modal>
       </Stack>
@@ -208,11 +214,8 @@ export default function PerformaTable({ header, title, rows, value, value1, hand
           </LocalizationProvider>
         </Box>
         <Box sx={{ pt: 2, pb: 1 }}>
-          <Button
-            variant="outlined"
-            onClick={submit}
-          >
-            Submit
+          <Button variant="outlined" onClick={submit}>
+            Filter
           </Button>
         </Box>
       </Stack>

@@ -90,17 +90,15 @@ export default function Percentage() {
   };
 
   const TARGET_YEAR = tiket.filter((tiket) => tiket.targetIn === 1);
-  const CHART_DATA_THIS_YEAR = (TARGET_YEAR.length / tiket.length) * 100;
+  const CHART_DATA_THIS_YEAR = tiket.length !== 0 ? (TARGET_YEAR.length / tiket.length) * 100 : 0;
 
   const TARGET_MONTH = thisMonth.filter((tiket) => tiket.targetIn === 1);
-  const CHART_DATA_THIS_MONTH = (TARGET_MONTH.length / thisMonth.length) * 100;
+  const CHART_DATA_THIS_MONTH = thisMonth !== 0 ? (TARGET_MONTH.length / thisMonth.length) * 100 : 0;
 
   const TARGET_WEEK = thisWeek.filter((tiket) => tiket.targetIn === 1);
-  const CHART_DATA_THIS_WEEK = (TARGET_WEEK.length / thisWeek.length) * 100;
+  const CHART_DATA_THIS_WEEK = thisWeek.length !== 0 ? (TARGET_WEEK.length / thisWeek.length) * 100 : 0;
 
   const TARGET_YESTERDAY = yesterday.filter((tiket) => tiket.targetIn === 1);
-  console.log('HAHA', TARGET_YESTERDAY.length, yesterday.length);
-
   const CHART_DATA_THIS_YESTERDAY = yesterday.length !== 0 ? (TARGET_YESTERDAY.length / yesterday.length) * 100 : 0;
 
   const theme = useTheme();

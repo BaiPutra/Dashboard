@@ -20,7 +20,7 @@ import {
   AppConversionRates,
   Percentage,
   PerformaTable,
-  AppCurrentVisits
+  TiketTerlambat,
 } from '../sections/@dashboard/app';
 
 const columns = [
@@ -73,7 +73,7 @@ const columns = [
     type: 'number',
     headerAlign: 'center',
     align: 'center',
-    flex: 1,
+    flex: 1.2,
     cellClassName: (params) => {
       if (params.value == null) {
         return '';
@@ -96,7 +96,7 @@ export default function EDC() {
   const [listKanca, setListKanca] = useState([]);
   const [Implementor, setImplementor] = useState([]);
   const [jenisTiket, setJenisTiket] = useState([]);
-  const [listPeruntukan, setPeruntukan] = useState([]);
+  const [tiketTerlambat, setTiketTerlambat] = useState([]);
 
   useEffect(() => {
     getAll(bagian);
@@ -105,10 +105,10 @@ export default function EDC() {
     performaImplementor(bagian);
     perJenisMasalah(bagian);
     perMinggu();
-    peruntukan();
+    terlambat();
   }, [bagian]);
 
-  const getAll = bagian => {
+  const getAll = (bagian) => {
     TiketDataService.getAll(bagian)
       .then((response) => {
         setTiket(response.data);
@@ -118,7 +118,7 @@ export default function EDC() {
         console.log(e);
       });
   };
-  const perTanggal = bagian => {
+  const perTanggal = (bagian) => {
     TiketDataService.perTanggal(bagian)
       .then((response) => {
         setListTanggal(response.data);
@@ -128,7 +128,7 @@ export default function EDC() {
         console.log(e);
       });
   };
-  const performaKanca = bagian => {
+  const performaKanca = (bagian) => {
     TiketDataService.performaKanca(bagian)
       .then((response) => {
         setListKanca(response.data);
@@ -138,7 +138,7 @@ export default function EDC() {
         console.log(e);
       });
   };
-  const performaImplementor = bagian => {
+  const performaImplementor = (bagian) => {
     TiketDataService.performaImplementor(bagian)
       .then((response) => {
         setImplementor(response.data);
@@ -148,7 +148,7 @@ export default function EDC() {
         console.log(e);
       });
   };
-  const perJenisMasalah = bagian => {
+  const perJenisMasalah = (bagian) => {
     TiketDataService.perJenisMasalah(bagian)
       .then((response) => {
         setJenisTiket(response.data);
@@ -168,10 +168,10 @@ export default function EDC() {
         console.log(e);
       });
   };
-  const peruntukan = () => {
-    TiketDataService.peruntukan()
+  const terlambat = () => {
+    TiketDataService.terlambat(bagian)
       .then((response) => {
-        setPeruntukan(response.data);
+        setTiketTerlambat(response.data);
         // console.log(response.data);
       })
       .catch((e) => {
@@ -241,15 +241,15 @@ export default function EDC() {
       .catch((e) => {
         // console.log(e);
       });
-      console.log(startMonth, endMonth);
-  }
+    console.log(startMonth, endMonth);
+  };
 
   const handleSubmit1 = () => {
     axios
       .get(
-        `http://localhost:3001/api/tiket/performaImplementor/${bagian}/${moment(startMonth1).format('YYYY-MM-DD')}/${moment(
-          endMonth1
-        ).format('YYYY-MM-DD')}`
+        `http://localhost:3001/api/tiket/performaImplementor/${bagian}/${moment(startMonth1).format(
+          'YYYY-MM-DD'
+        )}/${moment(endMonth1).format('YYYY-MM-DD')}`
       )
       .then((response) => {
         setImplementor(response.data);
@@ -258,236 +258,238 @@ export default function EDC() {
       .catch((e) => {
         // console.log(e);
       });
-      console.log(startMonth1, endMonth1);
-  }
+    console.log(startMonth1, endMonth1);
+  };
 
   const newJenisTiket = jenisTiket.slice(0, 5);
 
-  const uniqueValues = new Set(tiket.map(item => item.peruntukan));
-  // console.log(uniqueValues);
+  const user = localStorage.getItem('USER');
+  const parsedUser = JSON.parse(user);
+  // console.log('hahaha', typeof user, JSON.parse(user), user.role);
+  // user = JSON.parse(user)
+  console.log('haha', parsedUser);
+  if (parsedUser.role === 'staff' || parsedUser.role === 'supervisor_edc') {
+    return (
+      <Page title="EDC">
+        <Container maxWidth="xl">
+          <Typography variant="h4" sx={{ mb: 5 }}>
+            EDC Section
+          </Typography>
 
-  const count = {};
-  tiket.forEach(item => {
-    count[item.peruntukan] = (count[item.peruntukan] || 0) + 1;
-  });
-  // const peruntukan = [count.MERCHANT, count.BRILINKS, count.UKER]
+          <Grid container spacing={3}>
+            <Grid item xs={2}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="Start Date"
+                  value={value}
+                  maxDate={value1}
+                  onChange={handleChange}
+                  renderInput={(params) => <TextField size="small" {...params} />}
+                />
+              </LocalizationProvider>
+            </Grid>
 
+            <Grid item xs={2}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="End Date"
+                  value={value1}
+                  minDate={value}
+                  maxDate={new Date()}
+                  onChange={handleChange1}
+                  renderInput={(params) => <TextField size="small" {...params} />}
+                />
+              </LocalizationProvider>
+            </Grid>
+
+            <Grid item xs={2} justifyContent="center">
+              <Button
+                variant="outlined"
+                sx={{ height: '100%', width: '100%' }}
+                onClick={() => {
+                  axios
+                    .get(
+                      `http://localhost:3001/api/tiket/${bagian}/${moment(value).format('YYYY-MM-DD')}/${moment(
+                        value1
+                      ).format('YYYY-MM-DD')}`
+                    )
+                    .then((response) => {
+                      setTiket(response.data);
+                      // console.log(response.data);
+                    })
+                    .catch((e) => {
+                      // console.log(e);
+                    });
+                }}
+              >
+                Filter
+              </Button>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Grid container justifyContent="flex-end" alignItems="stretch">
+                <Button variant="contained" sx={{ width: '30%', height: 40 }}>
+                  Export PDF
+                </Button>
+              </Grid>
+            </Grid>
+
+            <Grid item xs={6} sm={6} md={3}>
+              <AppWidgetSummary
+                title="Tiket Selesai"
+                total={tiket.length}
+                icon={'ant-design:file-done-outlined'}
+                rows={tiket}
+              />
+            </Grid>
+
+            <Grid item xs={6} sm={6} md={3}>
+              <AppWidgetSummary
+                title="Sesuai Target"
+                total={targetIn.length}
+                color="success"
+                icon={'icon-park-solid:doc-success'}
+                rows={targetIn}
+              />
+            </Grid>
+
+            <Grid item xs={6} sm={6} md={3}>
+              <AppWidgetSummary
+                title="Keluar Target"
+                total={targetOut.length}
+                color="error"
+                icon={'icon-park-solid:file-failed'}
+                rows={targetOut}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={3}>
+              <Percentage title="Persentase" value={rate.toFixed(1)} />
+            </Grid>
+
+            <Grid item xs={12} md={6} lg={8}>
+              <Card>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="h6" sx={{ pl: 3, pt: 3, pb: 1 }}>
+                    Ticket Handle Last Week
+                  </Typography>
+                </Stack>
+                <Box
+                  sx={{
+                    height: 330,
+                    padding: 1,
+                    '& .super-app-theme--cell': {
+                      backgroundColor: 'rgba(224, 183, 60, 0.55)',
+                      color: '#1a3e72',
+                      fontWeight: '600',
+                    },
+                    '& .super-app.negative': {
+                      backgroundColor: '#d47483',
+                      color: '#1a3e72',
+                      fontWeight: '600',
+                    },
+                    '& .super-app.positive': {
+                      backgroundColor: 'rgba(157, 255, 118, 0.49)',
+                      fontWeight: '600',
+                    },
+                    '& .super-app.in': {
+                      color: '#2e7d32',
+                      fontWeight: '800',
+                    },
+                    '& .super-app.out': {
+                      color: '#d32f2f',
+                      fontWeight: '800',
+                    },
+                  }}
+                >
+                  <DataGrid hideFooter rows={listTanggal} columns={columns} sx={{ p: 1 }} />
+                </Box>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={6} lg={4}>
+              <TiketTerlambat title="Tiket Terlambat" rows={tiketTerlambat} />
+            </Grid>
+
+            <Grid item xs={12} md={6} lg={6}>
+              <AppWebsiteVisits
+                title="Tiket Selesai Per Minggu"
+                subheader="EDC Section"
+                chartLabels={minggu}
+                chartData={[
+                  {
+                    name: 'Tiket Selesai',
+                    type: 'bar',
+                    fill: 'solid',
+                    data: total,
+                  },
+                  {
+                    name: 'Sesuai Target',
+                    type: 'bar',
+                    fill: 'solid',
+                    data: totalIn,
+                  },
+                ]}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6} lg={6}>
+              <PerformaTable
+                header="Kantor Cabang"
+                title="Performa Kantor Cabang"
+                rows={listKanca}
+                value={startMonth}
+                value1={endMonth}
+                handleChange={handleChange2}
+                handleChange1={handleChange3}
+                submit={handleSubmit}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6} lg={6}>
+              <AppConversionRates
+                title="Performa Implementor"
+                subheader="Departemen ITE"
+                chartData={newJenisTiket.map((item) => {
+                  const newItem = { label: item.nama, value: item.total };
+                  return newItem;
+                })}
+                header="Implementor"
+                rows={jenisTiket}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6} lg={6}>
+              <PerformaTable
+                header="Implementor"
+                title="Performa Implementor"
+                rows={Implementor}
+                value={startMonth1}
+                value1={endMonth1}
+                handleChange={handleChange4}
+                handleChange1={handleChange5}
+                submit={handleSubmit1}
+              />
+            </Grid>
+          </Grid>
+        </Container>
+      </Page>
+    );
+  }
   return (
     <Page title="EDC">
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          EDC Section
-        </Typography>
-
-        <Grid container spacing={2}>
-          <Grid item xs={2}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="Start Date"
-                value={value}
-                maxDate={value1}
-                onChange={handleChange}
-                renderInput={(params) => <TextField size='small' {...params} />}
-              />
-            </LocalizationProvider>
-          </Grid>
-
-          <Grid item xs={2}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="End Date"
-                value={value1}
-                minDate={value}
-                maxDate={new Date()}
-                onChange={handleChange1}
-                renderInput={(params) => <TextField size='small' {...params} />}
-              />
-            </LocalizationProvider>
-          </Grid>
-
-          <Grid item xs={2} justifyContent="center">
-            <Button
-              variant="outlined"
-              sx={{ height: '100%', width: '100%' }}
-              onClick={() => {
-                axios
-                  .get(
-                    `http://localhost:3001/api/tiket/${bagian}/${moment(value).format('YYYY-MM-DD')}/${moment(value1).format(
-                      'YYYY-MM-DD'
-                    )}`
-                  )
-                  .then((response) => {
-                    setTiket(response.data);
-                    // console.log(response.data);
-                  })
-                  .catch((e) => {
-                    // console.log(e);
-                  });
-              }}
-            >
-              Submit
-            </Button>
-          </Grid>
-
-          <Grid item xs={6}>
-            <Grid container justifyContent="flex-end" alignItems="stretch">
-              <Button variant="contained" sx={{ width: '30%', height: 40 }}>
-                Export PDF
-              </Button>
-            </Grid>
-          </Grid>
-
-          <Grid item xs={6} sm={6} md={3}>
-            <AppWidgetSummary
-              title="Tiket Selesai"
-              total={tiket.length}
-              icon={'ant-design:file-done-outlined'}
-              rows={tiket}
-            />
-          </Grid>
-
-          <Grid item xs={6} sm={6} md={3}>
-            <AppWidgetSummary
-              title="Sesuai Target"
-              total={targetIn.length}
-              color="success"
-              icon={'icon-park-solid:doc-success'}
-              rows={targetIn}
-            />
-          </Grid>
-
-          <Grid item xs={6} sm={6} md={3}>
-            <AppWidgetSummary
-              title="Keluar Target"
-              total={targetOut.length}
-              color="error"
-              icon={'icon-park-solid:file-failed'}
-              rows={targetOut}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Percentage
-              title='Persentase'
-              value={rate.toFixed(1)}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={8}>
-            <Card>
-              <Stack direction="row" justifyContent="space-between">
-                <Typography variant="h6" sx={{ pl: 3, pt: 3, pb: 1 }}>
-                  Ticket Handle Last Week
-                </Typography>
-              </Stack>
-              <Box
-                sx={{
-                  height: 405,
-                  padding: 1,
-                  '& .super-app-theme--cell': {
-                    backgroundColor: 'rgba(224, 183, 60, 0.55)',
-                    color: '#1a3e72',
-                    fontWeight: '600',
-                  },
-                  '& .super-app.negative': {
-                    backgroundColor: '#d47483',
-                    color: '#1a3e72',
-                    fontWeight: '600',
-                  },
-                  '& .super-app.positive': {
-                    backgroundColor: 'rgba(157, 255, 118, 0.49)',
-                    fontWeight: '600',
-                  },
-                  '& .super-app.in': {
-                    color: '#2e7d32',
-                    fontWeight: '800',
-                  },
-                  '& .super-app.out': {
-                    color: '#d32f2f',
-                    fontWeight: '800',
-                  },
-                }}
-              >
-                <DataGrid hideFooter rows={listTanggal} columns={columns} sx={{ p: 1 }} />
-              </Box>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits
-              title="Current Visits"
-              chartData={listPeruntukan.map((item) => {
-                const newItem = { label: item.peruntukan, value: item.total };
-                return newItem;
-              })}
-              chartColors={[
-                theme.palette.primary.main,
-                theme.palette.chart.blue[0],
-                theme.palette.chart.yellow[0],
-              ]}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={6}>
-            <AppWebsiteVisits
-              title="Tiket Selesai Per Minggu"
-              subheader="EDC Section"
-              chartLabels={minggu}
-              chartData={[
-                {
-                  name: 'Tiket Selesai',
-                  type: 'bar',
-                  fill: 'solid',
-                  data: total,
-                },
-                {
-                  name: 'Sesuai Target',
-                  type: 'bar',
-                  fill: 'solid',
-                  data: totalIn,
-                },
-              ]}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={6}>
-            <PerformaTable
-              header='Kantor Cabang'
-              title='Performa Kantor Cabang'
-              rows={listKanca}
-              value={startMonth}
-              value1={endMonth}
-              handleChange={handleChange2}
-              handleChange1={handleChange3}
-              submit={handleSubmit}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={6}>
-            <AppConversionRates
-              title="Top 5 Jenis Masalah Bulan Ini"
-              subheader="EDC Section"
-              chartData={newJenisTiket.map((item) => {
-                const newItem = { label: item.nama, value: item.tiketClose };
-                return newItem;
-              })}
-              header='Jenis Masalah'
-              rows={jenisTiket}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={6}>
-            <PerformaTable
-              header='Implementor'
-              title='Performa Implementor'
-              rows={Implementor}
-              value={startMonth1}
-              value1={endMonth1}
-              handleChange={handleChange4}
-              handleChange1={handleChange5}
-              submit={handleSubmit1}
-            />
-          </Grid>
+        <Grid
+          container
+          display="flex"
+          direction="column"
+          alignItems="center"
+          justifyContent="space-evenly"
+          style={{ minHeight: '100vh' }}
+        >
+          <Typography variant="h4" sx={{ pb: 15 }}>
+            Anda tidak memiliki akses pada halaman ini!
+          </Typography>
         </Grid>
       </Container>
     </Page>

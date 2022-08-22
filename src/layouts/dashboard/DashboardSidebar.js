@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
@@ -15,9 +15,7 @@ import NavSection from '../../components/NavSection';
 //
 import navConfig from './NavConfig';
 
-// ----------------------------------------------------------------------
-
-const DRAWER_WIDTH = 280;
+const DRAWER_WIDTH = 220;
 
 const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {
@@ -34,8 +32,6 @@ const AccountStyle = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.grey[500_12],
 }));
 
-// ----------------------------------------------------------------------
-
 DashboardSidebar.propTypes = {
   isOpenSidebar: PropTypes.bool,
   onCloseSidebar: PropTypes.func,
@@ -43,8 +39,15 @@ DashboardSidebar.propTypes = {
 
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const isDesktop = useResponsive('up', 'lg');
+
+  const handleClick = () => {
+    localStorage.clear();
+    // window.location.reload();
+    navigate('/login');
+  }
 
   useEffect(() => {
     if (isOpenSidebar) {
@@ -84,25 +87,29 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
 
       <Box sx={{ flexGrow: 1 }} />
 
-      <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
-        <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
+      <Box sx={{ px: 2.5, pb: 5, mt: 7 }}>
+        <Stack alignItems="center" spacing={3} sx={{ pt: 3, borderRadius: 2, position: 'relative' }}>
           {/* <Box
             component="img"
             src="/static/illustrations/illustration_avatar.png"
             sx={{ width: 100, position: 'absolute', top: -50 }}
           /> */}
-          <Box sx={{ textAlign: 'center' }}>
+          {/* <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               Klik untuk buka portal
             </Typography>
-          </Box>
+          </Box> */}
 
-          <Button href="https://material-ui.com/store/items/minimal-dashboard/" target="_blank" variant="outlined" fullWidth>
+          <Button href="http://localhost:3000/login" variant="outlined" fullWidth color="error" onClick={handleClick}>
+            Log Out
+          </Button>
+
+          {/* <Button href="https://material-ui.com/store/items/minimal-dashboard/" target="_blank" variant="outlined" fullWidth>
             Portal JKE
           </Button>
           <Button href="https://material-ui.com/store/items/minimal-dashboard/" target="_blank" variant="outlined" fullWidth>
             Portal EDC
-          </Button>
+          </Button> */}
 
         </Stack>
       </Box>
