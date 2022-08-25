@@ -332,7 +332,7 @@ export default function ATM() {
     return (
       <Page title="ATM">
         <Container maxWidth="xl">
-          <Typography variant="h4" sx={{ mb: 5 }}>
+          <Typography variant="h4" sx={{ pt: 2, pb: 5 }}>
             ATM Section
           </Typography>
 

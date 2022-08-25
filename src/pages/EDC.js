@@ -272,7 +272,7 @@ export default function EDC() {
     return (
       <Page title="EDC">
         <Container maxWidth="xl">
-          <Typography variant="h4" sx={{ mb: 5 }}>
+          <Typography variant="h4" sx={{ pt: 2, pb: 5 }}>
             EDC Section
           </Typography>
 

@@ -42,7 +42,7 @@ export default function Percentage() {
       )
       .then((response) => {
         setTiket(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -58,7 +58,7 @@ export default function Percentage() {
       )
       .then((response) => {
         setThisMonth(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -92,13 +92,13 @@ export default function Percentage() {
   const TARGET_YEAR = tiket.filter((tiket) => tiket.targetIn === 1);
   const CHART_DATA_THIS_YEAR = tiket.length !== 0 ? (TARGET_YEAR.length / tiket.length) * 100 : 0;
 
-  const TARGET_MONTH = thisMonth.filter((tiket) => tiket.targetIn === 1);
+  const TARGET_MONTH = thisMonth.filter((thisMonth) => thisMonth.targetIn === 1);
   const CHART_DATA_THIS_MONTH = thisMonth !== 0 ? (TARGET_MONTH.length / thisMonth.length) * 100 : 0;
 
-  const TARGET_WEEK = thisWeek.filter((tiket) => tiket.targetIn === 1);
+  const TARGET_WEEK = thisWeek.filter((thisWeek) => thisWeek.targetIn === 1);
   const CHART_DATA_THIS_WEEK = thisWeek.length !== 0 ? (TARGET_WEEK.length / thisWeek.length) * 100 : 0;
 
-  const TARGET_YESTERDAY = yesterday.filter((tiket) => tiket.targetIn === 1);
+  const TARGET_YESTERDAY = yesterday.filter((yesterday) => yesterday.targetIn === 1);
   const CHART_DATA_THIS_YESTERDAY = yesterday.length !== 0 ? (TARGET_YESTERDAY.length / yesterday.length) * 100 : 0;
 
   const theme = useTheme();
@@ -106,7 +106,9 @@ export default function Percentage() {
   const isDesktop = useResponsive('up', 'sm');
 
   const chartOptionsCheckIn = merge(BaseOptionChart(), {
-    chart: { sparkline: { enabled: true } },
+    chart: { 
+      sparkline: { enabled: true },
+    },
     grid: {
       padding: {
         top: -9,
@@ -174,7 +176,9 @@ export default function Percentage() {
         <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} sx={{ width: 1, py: 3 }}>
           <ReactApexChart
             type="radialBar"
-            series={[CHART_DATA_THIS_MONTH.toFixed(2)]}
+            series={[
+              CHART_DATA_THIS_MONTH.toFixed(2)
+            ]}
             options={chartOptionsCheckIn}
             {...CHART_SIZE}
           />

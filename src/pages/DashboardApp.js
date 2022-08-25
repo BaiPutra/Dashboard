@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
+// import { PDFDownloadLink } from '@react-pdf/renderer';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography, TextField, Button } from '@mui/material';
+import { Grid, Container, Typography, TextField, Button, IconButton } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { clsx } from 'clsx';
+import Pdfjs from 'jspdf';
+import 'jspdf-autotable';
+// import PDF, { Text, AddPage, Line, Image, Table, Html } from 'jspdf-react';
 // data
 import TiketDataService from '../helper/services';
 // components
+import Iconify from '../components/Iconify';
 import Page from '../components/Page';
 // sections
-import { AppCurrentVisits, AppWebsiteVisits, AppWidgetSummary, PerformaRate, AppConversionRates } from '../sections/@dashboard/app';
+import {
+  AppCurrentVisits,
+  AppWebsiteVisits,
+  AppWidgetSummary,
+  PerformaRate,
+  AppConversionRates,
+  // DocumentPDF,
+} from '../sections/@dashboard/app';
 
 export default function DashboardApp() {
   const theme = useTheme();
@@ -40,7 +52,7 @@ export default function DashboardApp() {
       )
       .then((response) => {
         setTiket(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -50,7 +62,7 @@ export default function DashboardApp() {
     TiketDataService.perMinggu()
       .then((response) => {
         setListMinggu(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -60,7 +72,7 @@ export default function DashboardApp() {
     TiketDataService.perBagian()
       .then((response) => {
         setBagian(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -75,7 +87,7 @@ export default function DashboardApp() {
       )
       .then((response) => {
         setListKanca(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -90,7 +102,7 @@ export default function DashboardApp() {
       )
       .then((response) => {
         setImplementor(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -120,12 +132,29 @@ export default function DashboardApp() {
 
   const user = localStorage.getItem('USER');
   const parsedUser = JSON.parse(user);
-  
+
+  const downloadPDF = () => {
+    const doc = new Pdfjs();
+    doc.text('Judul PDF', 20, 10);
+    doc.autoTable({
+      theme: 'grid',
+      head: [['Name', 'Email', 'Country']],
+      body: [
+        ['Baihaqi', 'bai@email', 'jepang'],
+        ['Bro', 'bro@email', 'inggris'],
+      ],
+    });
+    doc.save('table.pdf');
+  };
+
   if (parsedUser.role === 'staff') {
     return (
       <Page title="Dashboard">
         <Container maxWidth="xl">
-          <Typography variant="h4" sx={{ pb: 0.5 }}>
+          {/* <IconButton onClick={onOpenSidebar} sx={{ mr: 1, color: 'text.primary', display: { lg: 'none' } }}>
+            <Iconify icon="eva:menu-2-fill" />
+          </IconButton> */}
+          <Typography variant="h4" sx={{ pt: 2, pb: 0.5 }}>
             Kinerja Departemen ITE 2022
           </Typography>
           <Typography sx={{ mb: 4 }}>Tiket ATM, CRM, dan EDC</Typography>
@@ -169,7 +198,7 @@ export default function DashboardApp() {
                     )
                     .then((response) => {
                       setTiket(response.data);
-                      console.log(response.data);
+                      // console.log(response.data);
                     })
                     .catch((e) => {
                       console.log(e);
@@ -182,9 +211,16 @@ export default function DashboardApp() {
 
             <Grid item xs={6}>
               <Grid container justifyContent="flex-end" alignItems="stretch">
-                <Button variant="contained" sx={{ width: '30%', height: 40 }}>
+                {/* <PDFDownloadLink
+                  // document={<InvoicePDF invoice={invoice} />}
+                  document={<DocumentPDF />}
+                  fileName='namafile'
+                  style={{ textDecoration: 'none' }}
+                > */}
+                <Button variant="contained" onClick={downloadPDF} sx={{ width: '30%', height: 40 }}>
                   Export PDF
                 </Button>
+                {/* </PDFDownloadLink> */}
               </Grid>
             </Grid>
 

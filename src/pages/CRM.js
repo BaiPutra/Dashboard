@@ -270,7 +270,7 @@ export default function CRM() {
     return (
       <Page title="CRM">
         <Container maxWidth="xl">
-          <Typography variant="h4" sx={{ mb: 5 }}>
+          <Typography variant="h4" sx={{ pt: 2, pb: 5 }}>
             CRM Section
           </Typography>
 
