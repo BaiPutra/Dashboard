@@ -85,69 +85,6 @@ const columns = [
   },
 ];
 
-const columns1 = [
-  { field: 'id', headerName: 'No', flex: 0.4 },
-  { field: 'tanggal', headerName: 'Tanggal', flex: 1.5 },
-  {
-    field: 'tiketClose',
-    headerName: 'Tiket Selesai',
-    type: 'number',
-    headerAlign: 'center',
-    align: 'center',
-    flex: 1,
-    color: '#1a3e72',
-  },
-  {
-    field: 'targetIn',
-    headerName: 'Sesuai Target',
-    type: 'number',
-    headerAlign: 'center',
-    align: 'center',
-    flex: 1,
-    cellClassName: (params) => {
-      if (params.value == null) {
-        return '';
-      }
-      return clsx('super-app', {
-        in: params,
-      });
-    },
-  },
-  {
-    field: 'targetOut',
-    headerName: 'Keluar Target',
-    type: 'number',
-    headerAlign: 'center',
-    align: 'center',
-    flex: 1,
-    cellClassName: (params) => {
-      if (params.value == null) {
-        return '';
-      }
-      return clsx('super-app', {
-        out: params,
-      });
-    },
-  },
-  {
-    field: 'rateTarget',
-    headerName: 'Persentase (%)',
-    type: 'number',
-    headerAlign: 'center',
-    align: 'center',
-    flex: 1,
-    cellClassName: (params) => {
-      if (params.value == null) {
-        return '';
-      }
-      return clsx('super-app', {
-        negative: params.value < 95,
-        positive: params.value > 95,
-      });
-    },
-  },
-];
-
 export default function ATM() {
   const bagian = `'ATM'`;
 
@@ -165,8 +102,8 @@ export default function ATM() {
     performaKanca(bagian);
     performaImplementor(bagian);
     perJenisMasalah(bagian);
+    terlambat(bagian);
     perMinggu();
-    terlambat();
   }, [bagian]);
 
   const getAll = (bagian) => {
@@ -229,7 +166,7 @@ export default function ATM() {
         console.log(e);
       });
   };
-  const terlambat = () => {
+  const terlambat = (bagian) => {
     TiketDataService.terlambat(bagian)
       .then((response) => {
         setTiketTerlambat(response.data);
@@ -300,7 +237,7 @@ export default function ATM() {
         // console.log(response.data);
       })
       .catch((e) => {
-        // console.log(e);
+        console.log(e);
       });
     console.log(startMonth, endMonth);
   };
@@ -317,7 +254,7 @@ export default function ATM() {
         // console.log(response.data);
       })
       .catch((e) => {
-        // console.log(e);
+        console.log(e);
       });
     console.log(startMonth1, endMonth1);
   };
@@ -337,10 +274,11 @@ export default function ATM() {
           </Typography>
 
           <Grid container spacing={3}>
-            <Grid item xs={2}>
+            <Grid item xs={6} sm={3} md={2}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="Start Date"
+                  inputFormat="dd/MM/yyyy"
                   value={value}
                   maxDate={value1}
                   onChange={handleChange}
@@ -349,10 +287,11 @@ export default function ATM() {
               </LocalizationProvider>
             </Grid>
 
-            <Grid item xs={2}>
+            <Grid item xs={6} sm={3} md={2}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="End Date"
+                  inputFormat="dd/MM/yyyy"
                   value={value1}
                   minDate={value}
                   maxDate={new Date()}
@@ -362,7 +301,7 @@ export default function ATM() {
               </LocalizationProvider>
             </Grid>
 
-            <Grid item xs={2} justifyContent="center">
+            <Grid item xs={6} sm={3} md={2} justifyContent="center">
               <Button
                 variant="outlined"
                 sx={{ height: '100%', width: '100%' }}
@@ -378,7 +317,7 @@ export default function ATM() {
                       // console.log(response.data);
                     })
                     .catch((e) => {
-                      // console.log(e);
+                      console.log(e);
                     });
                 }}
               >
@@ -386,15 +325,15 @@ export default function ATM() {
               </Button>
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={0} md={6}>
               <Grid container justifyContent="flex-end" alignItems="stretch">
-                <Button variant="contained" sx={{ width: '30%', height: 40 }}>
+                {/* <Button variant="contained" sx={{ width: '30%', height: 40 }}>
                   Export PDF
-                </Button>
+                </Button> */}
               </Grid>
             </Grid>
 
-            <Grid item xs={6} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <AppWidgetSummary
                 title="Tiket Selesai"
                 total={tiket.length}
@@ -403,7 +342,7 @@ export default function ATM() {
               />
             </Grid>
 
-            <Grid item xs={6} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <AppWidgetSummary
                 title="Sesuai Target"
                 total={targetIn.length}
@@ -413,7 +352,7 @@ export default function ATM() {
               />
             </Grid>
 
-            <Grid item xs={6} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <AppWidgetSummary
                 title="Keluar Target"
                 total={targetOut.length}

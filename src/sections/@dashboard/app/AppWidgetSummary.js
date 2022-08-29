@@ -8,13 +8,13 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Iconify from '../../../components/Iconify';
 
 const columns = [
-  { field: 'id', headerName: '#', flex: 0.5 },
+  { field: 'id', headerName: '#', flex: 0.6 },
   { field: 'tid', headerName: 'TID', flex: 0.5 },
-  { field: 'jenisMasalah', headerName: 'Jenis Masalah', flex: 1 },
-  { field: 'lokasi', headerName: 'Lokasi', flex: 1 },
-  { field: 'kanca', headerName: 'Kantor Cabang', flex: 1 },
-  { field: 'entryTiket', headerName: 'Tiket Masuk', flex: 0.7 },
-  { field: 'updateTiket', headerName: 'Tiket Selesai', flex: 0.7 },
+  { field: 'jenisMasalah', headerName: 'Jenis Masalah', flex: 1.9 },
+  { field: 'lokasi', headerName: 'Lokasi', flex: 1.7 },
+  { field: 'kanca', headerName: 'Kantor Cabang', flex: 1.3 },
+  { field: 'entryTiket', headerName: 'Tiket Masuk', flex: 0.8 },
+  { field: 'updateTiket', headerName: 'Tiket Selesai', flex: 0.8 },
 ];
 
 const style = {
@@ -23,7 +23,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '75%',
+  width: '85%',
   bgcolor: 'background.paper',
   borderRadius: 2,
   border: '1px solid #000',

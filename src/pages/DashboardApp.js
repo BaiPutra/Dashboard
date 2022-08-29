@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
-// import { PDFDownloadLink } from '@react-pdf/renderer';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography, TextField, Button, IconButton } from '@mui/material';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { Grid, Container, Typography, TextField, Button } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { clsx } from 'clsx';
-import Pdfjs from 'jspdf';
-import 'jspdf-autotable';
-// import PDF, { Text, AddPage, Line, Image, Table, Html } from 'jspdf-react';
+// import { Document, Text, View, StyleSheet } from '@react-pdf/renderer';
+// import Pdfjs from 'jspdf';
+// import 'jspdf-autotable';
 // data
 import TiketDataService from '../helper/services';
 // components
-import Iconify from '../components/Iconify';
 import Page from '../components/Page';
 // sections
 import {
@@ -24,7 +21,7 @@ import {
   AppWidgetSummary,
   PerformaRate,
   AppConversionRates,
-  // DocumentPDF,
+  // DocumentPDF
 } from '../sections/@dashboard/app';
 
 export default function DashboardApp() {
@@ -120,6 +117,9 @@ export default function DashboardApp() {
   const [value, setValue] = React.useState(new Date().setDate(1));
   const [value1, setValue1] = React.useState(new Date());
 
+  console.log('tanggal', moment(value).format('YYYY-MM-DD'));
+  console.log('tiket', Object.entries(tiket));
+
   const handleChange = (newValue) => {
     setValue(newValue);
   };
@@ -133,38 +133,40 @@ export default function DashboardApp() {
   const user = localStorage.getItem('USER');
   const parsedUser = JSON.parse(user);
 
-  const downloadPDF = () => {
-    const doc = new Pdfjs();
-    doc.text('Judul PDF', 20, 10);
-    doc.autoTable({
-      theme: 'grid',
-      head: [['Name', 'Email', 'Country']],
-      body: [
-        ['Baihaqi', 'bai@email', 'jepang'],
-        ['Bro', 'bro@email', 'inggris'],
-      ],
-    });
-    doc.save('table.pdf');
-  };
+  // const downloadPDF = () => {
+  //   const doc = new Pdfjs();
+  //   doc.text(`${moment(value).format('YYYY-MM-DD')} - ${moment(value1).format('YYYY-MM-DD')}`, 20, 10);
+  //   doc.autoTable({
+  //     theme: 'grid',
+  //     head: [['Tiket Selesai', 'Tiket Sesuai Target', 'Tiket Keluar Target']],
+  //     body: [
+  //       [tiket.length, targetIn.length, targetOut.length],
+  //     ],
+  //   });
+  //   doc.autoTable({
+  //     theme: 'grid',
+  //     head: [['Tiket ID', 'TID', 'Jenis Masalah', 'Lokasi', 'Kantor Cabang', 'Tiket Masuk', 'Tiket Selesai']],
+  //     body: Object.entries(tiket),
+  //   });
+  //   doc.save('table.pdf');
+  // };
 
   if (parsedUser.role === 'staff') {
     return (
       <Page title="Dashboard">
         <Container maxWidth="xl">
-          {/* <IconButton onClick={onOpenSidebar} sx={{ mr: 1, color: 'text.primary', display: { lg: 'none' } }}>
-            <Iconify icon="eva:menu-2-fill" />
-          </IconButton> */}
           <Typography variant="h4" sx={{ pt: 2, pb: 0.5 }}>
             Kinerja Departemen ITE 2022
           </Typography>
           <Typography sx={{ mb: 4 }}>Tiket ATM, CRM, dan EDC</Typography>
 
           <Grid container spacing={3}>
-            <Grid item xs={2}>
+            <Grid item xs={6} sm={3} md={2}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DesktopDatePicker
+                <DatePicker
                   id="startDate"
                   label="Start Date"
+                  inputFormat="dd/MM/yyyy"
                   value={value}
                   maxDate={value1}
                   onChange={handleChange}
@@ -172,11 +174,12 @@ export default function DashboardApp() {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={6} sm={3} md={2}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DesktopDatePicker
+                <DatePicker
                   id="endDate"
                   label="End Date"
+                  inputFormat="dd/MM/yyyy"
                   value={value1}
                   minDate={value}
                   maxDate={new Date()}
@@ -185,7 +188,7 @@ export default function DashboardApp() {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item xs={2} justifyContent="center">
+            <Grid item xs={6} sm={3} md={2} justifyContent="center">
               <Button
                 variant="outlined"
                 sx={{ height: '100%', width: '100%' }}
@@ -209,22 +212,22 @@ export default function DashboardApp() {
               </Button>
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={0} md={6}>
               <Grid container justifyContent="flex-end" alignItems="stretch">
                 {/* <PDFDownloadLink
                   // document={<InvoicePDF invoice={invoice} />}
                   document={<DocumentPDF />}
-                  fileName='namafile'
+                  fileName="namafile"
                   style={{ textDecoration: 'none' }}
                 > */}
-                <Button variant="contained" onClick={downloadPDF} sx={{ width: '30%', height: 40 }}>
-                  Export PDF
-                </Button>
+                  {/* <Button variant="contained" onClick={downloadPDF} sx={{ width: '30%', height: 40 }}>
+                    Export PDF
+                  </Button> */}
                 {/* </PDFDownloadLink> */}
               </Grid>
             </Grid>
 
-            <Grid item xs={6} sm={6} md={4}>
+            <Grid item xs={12} sm={12} md={4}>
               <AppWidgetSummary
                 title="Tiket Selesai"
                 total={tiket.length}
@@ -233,7 +236,7 @@ export default function DashboardApp() {
               />
             </Grid>
 
-            <Grid item xs={6} sm={6} md={4}>
+            <Grid item xs={12} sm={12} md={4}>
               <AppWidgetSummary
                 title="Tiket Sesuai Target"
                 total={targetIn.length}
@@ -243,7 +246,7 @@ export default function DashboardApp() {
               />
             </Grid>
 
-            <Grid item xs={6} sm={6} md={4}>
+            <Grid item xs={12} sm={12} md={4}>
               <AppWidgetSummary
                 title="Tiket Keluar Target"
                 total={targetOut.length}

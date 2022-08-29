@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 // @mui
-import { Typography, Card, Box, Modal, Stack, Button, TextField } from '@mui/material';
+import { Typography, Card, Box, Modal, Stack, Button } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { clsx } from 'clsx';
 
 const style = {
@@ -15,7 +12,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '70%',
+  width: '80%',
   bgcolor: 'background.paper',
   borderRadius: 2,
   border: '1px solid #000',
@@ -67,13 +64,15 @@ export default function TiketTerlambat({ title, rows }) {
 
   const details = [
     { field: 'id', headerName: 'Tiket ID', flex: 1 },
-    { field: 'status', headerName: 'Status', flex: 1 },
+    { field: 'tid', headerName: 'TID', flex: 1 },
+    { field: 'lokasi', headerName: 'Lokasi', flex: 3 },
+    { field: 'status', headerName: 'Status', flex: 1.5 },
     {
       field: 'bagian',
       headerName: 'Bagian',
       flex: 1,
     },
-    { field: 'jenisMasalah', headerName: 'Jenis Masalah', flex: 3 },
+    { field: 'jenisMasalah', headerName: 'Jenis Masalah', flex: 2 },
     {
       field: 'tanggal',
       headerName: 'Entry Tiket',
@@ -83,7 +82,7 @@ export default function TiketTerlambat({ title, rows }) {
       field: 'targetHari',
       headerName: 'Target (hari)',
       type: 'number',
-      flex: 1,
+      flex: 1.5,
       headerAlign: 'center',
       align: 'center',
     },

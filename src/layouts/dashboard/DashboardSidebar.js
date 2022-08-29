@@ -15,7 +15,7 @@ import NavSection from '../../components/NavSection';
 //
 import navConfig from './NavConfig';
 
-const DRAWER_WIDTH = 220;
+const DRAWER_WIDTH = 190;
 
 const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {

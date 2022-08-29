@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment-timezone';
 import axios from 'axios';
 // @mui
-import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography, Card, Box, Stack, TextField, Button } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -87,7 +86,6 @@ const columns = [
 ];
 
 export default function EDC() {
-  const theme = useTheme();
   const bagian = `'EDC'`;
 
   const [tiket, setTiket] = useState([]);
@@ -104,8 +102,8 @@ export default function EDC() {
     performaKanca(bagian);
     performaImplementor(bagian);
     perJenisMasalah(bagian);
+    terlambat(bagian);
     perMinggu();
-    terlambat();
   }, [bagian]);
 
   const getAll = (bagian) => {
@@ -168,7 +166,7 @@ export default function EDC() {
         console.log(e);
       });
   };
-  const terlambat = () => {
+  const terlambat = (bagian) => {
     TiketDataService.terlambat(bagian)
       .then((response) => {
         setTiketTerlambat(response.data);
@@ -239,7 +237,7 @@ export default function EDC() {
         // console.log(response.data);
       })
       .catch((e) => {
-        // console.log(e);
+        console.log(e);
       });
     console.log(startMonth, endMonth);
   };
@@ -256,7 +254,7 @@ export default function EDC() {
         // console.log(response.data);
       })
       .catch((e) => {
-        // console.log(e);
+        console.log(e);
       });
     console.log(startMonth1, endMonth1);
   };
@@ -277,10 +275,11 @@ export default function EDC() {
           </Typography>
 
           <Grid container spacing={3}>
-            <Grid item xs={2}>
+            <Grid item xs={6} sm={3} md={2}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="Start Date"
+                  inputFormat="dd/MM/yyyy"
                   value={value}
                   maxDate={value1}
                   onChange={handleChange}
@@ -289,10 +288,11 @@ export default function EDC() {
               </LocalizationProvider>
             </Grid>
 
-            <Grid item xs={2}>
+            <Grid item xs={6} sm={3} md={2}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="End Date"
+                  inputFormat="dd/MM/yyyy"
                   value={value1}
                   minDate={value}
                   maxDate={new Date()}
@@ -302,7 +302,7 @@ export default function EDC() {
               </LocalizationProvider>
             </Grid>
 
-            <Grid item xs={2} justifyContent="center">
+            <Grid item xs={6} sm={3} md={2} justifyContent="center">
               <Button
                 variant="outlined"
                 sx={{ height: '100%', width: '100%' }}
@@ -318,7 +318,7 @@ export default function EDC() {
                       // console.log(response.data);
                     })
                     .catch((e) => {
-                      // console.log(e);
+                      console.log(e);
                     });
                 }}
               >
@@ -326,15 +326,15 @@ export default function EDC() {
               </Button>
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={0} md={6}>
               <Grid container justifyContent="flex-end" alignItems="stretch">
-                <Button variant="contained" sx={{ width: '30%', height: 40 }}>
+                {/* <Button variant="contained" sx={{ width: '30%', height: 40 }}>
                   Export PDF
-                </Button>
+                </Button> */}
               </Grid>
             </Grid>
 
-            <Grid item xs={6} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <AppWidgetSummary
                 title="Tiket Selesai"
                 total={tiket.length}
@@ -343,7 +343,7 @@ export default function EDC() {
               />
             </Grid>
 
-            <Grid item xs={6} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <AppWidgetSummary
                 title="Sesuai Target"
                 total={targetIn.length}
@@ -353,7 +353,7 @@ export default function EDC() {
               />
             </Grid>
 
-            <Grid item xs={6} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <AppWidgetSummary
                 title="Keluar Target"
                 total={targetOut.length}
@@ -402,7 +402,7 @@ export default function EDC() {
                     },
                   }}
                 >
-                  <DataGrid hideFooter rows={listTanggal} columns={columns} sx={{ p: 1 }} />
+                  <DataGrid hideFooter rows={listTanggal} columns={columns} density="compact" sx={{ p: 1 }} />
                 </Box>
               </Card>
             </Grid>

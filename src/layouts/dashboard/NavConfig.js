@@ -14,17 +14,17 @@ const navConfig = [
   {
     title: 'ATM',
     path: '/dashboard/atm',
-    icon: getIcon('eva:people-fill'),
+    icon: getIcon('fluent:building-retail-money-20-filled'),
   },
   {
     title: 'CRM',
     path: '/dashboard/crm',
-    icon: getIcon('eva:shopping-bag-fill'),
+    icon: getIcon('ri:luggage-deposit-fill'),
   },
   {
     title: 'EDC',
     path: '/dashboard/edc',
-    icon: getIcon('eva:file-text-fill'),
+    icon: getIcon('bxs:credit-card-alt'),
   },
   // {
   //   title: 'login',
